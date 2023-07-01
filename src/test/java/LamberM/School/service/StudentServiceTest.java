@@ -9,8 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -35,10 +33,10 @@ class StudentServiceTest implements UnitTest {
         //given
         Student studentMock = mock(Student.class);
         //when
-        systemUnderTest.deleteStudent(studentMock);
+        systemUnderTest.deleteStudentById(studentMock.getId());
         //then
-        verify(studentRepositoryMock).delete(studentMock);
-        boolean isEmptyList= systemUnderTest.findStudentByLastName(studentMock.getLastName()).isEmpty();
+        verify(studentRepositoryMock).deleteById(studentMock.getId());
+        boolean isEmptyList= systemUnderTest.findStudentById(studentMock.getId()).isEmpty();
         Assertions.assertTrue(isEmptyList);
     }
     @Test
@@ -52,6 +50,63 @@ class StudentServiceTest implements UnitTest {
         verify(studentRepositoryMock).save(studentMock);
         verify(studentRepositoryMock).findByLastName(studentMock.getLastName());
         Assertions.assertNotNull(systemUnderTest.findStudentByLastName(studentMock.getLastName()));
+    }
+    @Test
+    void givenStudentMockButNotSaveInDb_whenFindStudentByLastName_thenGetNothing(){
+        //given
+        Student studentMock = mock(Student.class);
+        //when
+        systemUnderTest.findStudentByLastName(studentMock.getLastName());
+        //then
+        verify(studentRepositoryMock).findByLastName(studentMock.getLastName());
+        boolean isEmptyList= systemUnderTest.findStudentByLastName(studentMock.getLastName()).isEmpty();
+        Assertions.assertTrue(isEmptyList);
+    }
+    @Test
+    void givenStudentMock_whenFindStudentByFirstName_thenGetWantedStudent(){
+        //given
+        Student studentMock = mock(Student.class);
+        studentRepositoryMock.save(studentMock);
+        //when
+        systemUnderTest.findStudentByFirstName(studentMock.getFirstName());
+        //then
+        verify(studentRepositoryMock).save(studentMock);
+        verify(studentRepositoryMock).findByFirstName(studentMock.getFirstName());
+        Assertions.assertNotNull(systemUnderTest.findStudentByFirstName(studentMock.getFirstName()));
+    }
+    @Test
+    void givenStudentMockButNotSaveInDb_whenFindStudentByFirstName_thenGetNothing(){
+        //given
+        Student studentMock = mock(Student.class);
+        //when
+        systemUnderTest.findStudentByFirstName(studentMock.getFirstName());
+        //then
+        verify(studentRepositoryMock).findByFirstName(studentMock.getFirstName());
+        boolean isEmptyList= systemUnderTest.findStudentByFirstName(studentMock.getFirstName()).isEmpty();
+        Assertions.assertTrue(isEmptyList);
+    }
+    @Test
+    void givenStudentMock_whenFindStudentById_thenGetWantedStudent(){
+        //given
+        Student studentMock = mock(Student.class);
+        studentRepositoryMock.save(studentMock);
+        //when
+        systemUnderTest.findStudentById(studentMock.getId());
+        //then
+        verify(studentRepositoryMock).save(studentMock);
+        verify(studentRepositoryMock).findById(studentMock.getId());
+        Assertions.assertNotNull(systemUnderTest.findStudentById(studentMock.getId()));
+    }
+    @Test
+    void givenStudentMockButNotSaveInDb_whenFindStudentById_thenGetNothing(){
+        //given
+        Student studentMock = mock(Student.class);
+        //when
+        systemUnderTest.findStudentById(studentMock.getId());
+        //then
+        verify(studentRepositoryMock).findById(studentMock.getId());
+        boolean isEmptyList= systemUnderTest.findStudentById(studentMock.getId()).isEmpty();
+        Assertions.assertTrue(isEmptyList);
     }
     @Test
     void givenStudentMock_whenFindAllStudents_thenGetStudents(){

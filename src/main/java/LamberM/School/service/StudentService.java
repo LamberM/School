@@ -22,11 +22,17 @@ public class StudentService {
         studentRepository.save(student);
     }
     @Transactional
-    public void deleteStudent(Student student){
-        studentRepository.delete(student);
+    public void deleteStudentById(Integer id){
+        studentRepository.deleteById(id);
     }
     public Optional<Student> findStudentByLastName(String lastName){
         return studentRepository.findByLastName(lastName);
+    }
+    public Optional<Student> findStudentByFirstName(String firstName){
+        return studentRepository.findByFirstName(firstName);
+    }
+    public Optional<Student> findStudentById(Integer id){
+        return studentRepository.findById(id);
     }
     public List<Student> findAllStudents(){
         return studentRepository.findAll(Sort.by(Sort.Direction.ASC,"number"));
