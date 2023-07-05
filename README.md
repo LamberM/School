@@ -17,7 +17,7 @@ docker pull mysql
 docker run --name {database name} -e MYSQL_ROOT_PASSWORD={password} -d -p {deafult: 3306:3306} mysql
 ~~~~
 #### Using IntelliJ Idea
-* go to src/main/java/LamberM/school/SchoolApplication.java class
+* go to src/main/java/org.lamberm/school/SchoolApplication.java class
 * run 'SchoolApplication'
 
 Server will start at http://localhost:8080/

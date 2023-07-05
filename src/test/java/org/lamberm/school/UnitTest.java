@@ -1,4 +1,4 @@
-package LamberM.School;
+package org.lamberm.school;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
