@@ -1,0 +1,24 @@
+version: '3'
+services:
+  java:
+    build:
+      dockerfile: Dockerfile
+    container_name: school
+    networks:
+      - internal
+    ports:
+      - "8080:8080"
+  postgreSQL:
+    image: postgres:alpine3.18
+    container_name: school-db
+    environment:
+      POSTGRES_DB: school
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+     - "5432:5432"
+    networks:
+      - internal
+networks:
+  internal:
+    driver: bridge
