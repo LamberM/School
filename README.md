@@ -1,30 +1,35 @@
 # School Project
 
-This project was implemented using Spring, Docker, mysql
+This project was implemented using Spring, Hibernate, PostgreSQL, Docker
 ## TODO
 * available endpoints in README
 * controller tests
+* integration tests
 * create new interesting function
+### Must have to start server:
+* Docker
+* IntelliJ Idea
 ## To start server:
-#### !!! To run application you need to have mysql database !!!
-I am using Docker where I create container with image.
-#### To download mysql on docker:
-~~~~
-docker pull mysql
-~~~~
-#### To create container with image:
-~~~~
-docker run --name {database name} -e MYSQL_ROOT_PASSWORD={password} -d -p {deafult: 3306:3306} mysql
-~~~~
 #### Using IntelliJ Idea
-* go to src/main/java/org.lamberm/school/SchoolApplication.java class
-* run 'SchoolApplication'
-
+1) Create target file using:
+~~~
+mvn clean package
+~~~
+2) Copy this text, use terminal and paste:
+~~~
+docker-compose up
+~~~
 Server will start at http://localhost:8080/
 
+#### If you want to terminate the action
+1) Use terminal and click on your keyboard ctrl + c
+2) Copy this text, use terminal and paste:
+~~~
+docker-compose down
+~~~
 ## Available endpoints:
 
 ## Response codes
 #### 200 OK - when operation is successful
 #### 400 Bad Request - when validation error occurs
-#### 404 Not Found - when no data in mysql
+#### 404 Not Found - when no data in database
