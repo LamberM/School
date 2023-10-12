@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories("LamberM.School.repository")
+@EnableJpaRepositories("org.lamberm.school.repository")
 public class SchoolApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SchoolApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SchoolApplication.class, args);
+    }
 
 }
