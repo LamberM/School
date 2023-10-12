@@ -21,6 +21,7 @@ public class StudentRestController {
     private static final String SECOND_NAME_LENGTH = "Second name length can't be more than 20";
     private static final String LAST_NAME_LENGTH = "Last name length can't be less than 3 and more than 100";
     private static final String PESEL_LENGTH = "PESEL length requires 11 characters";
+    private static final String PESEL_DIGITS = "PESEL must be digits";
 
     public static class RestValidationException extends RuntimeException {
         public RestValidationException(String message) {
@@ -30,14 +31,20 @@ public class StudentRestController {
 
     @PostMapping("/add")
     public ResponseEntity addStudentToDatabase(@RequestBody StudentDTO studentDTO) {
-        if (!isFirstNameValid(studentDTO.getFirstName())) {
+        if (!isLengthOfFirstNameValid(studentDTO.getFirstName())) {
             throw new RestValidationException(FIRST_NAME_LENGTH);
         }
-        if (!isSecondNameValid(studentDTO.getSecondName())) {
+        if (!isLengthOfSecondNameValid(studentDTO.getSecondName())) {
             throw new RestValidationException(SECOND_NAME_LENGTH);
         }
-        if (!isLastNameValid(studentDTO.getLastName())) {
+        if (!isLengthOfLastNameValid(studentDTO.getLastName())) {
             throw new RestValidationException(LAST_NAME_LENGTH);
+        }
+        if (!isLengthOfPeselValid(studentDTO.getPesel())) {
+            throw new RestValidationException(PESEL_LENGTH);
+        }
+        if(!arePeselDigitsCorrect(studentDTO.getPesel())){
+            throw new RestValidationException(PESEL_DIGITS);
         }
         studentService.addStudent(studentDTO);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -60,47 +67,53 @@ public class StudentRestController {
     }
 
     @GetMapping("/find/lastName/{lastName}")
-    public ResponseEntity<Optional<List<StudentDTO>>> provideStudentByLastName(@PathVariable("lastName") String lastName) {
-        if (!isLastNameValid(lastName)) {
+    public ResponseEntity<Optional<List<StudentDTO>>> provideStudentsByLastName(@PathVariable("lastName") String lastName) {
+        if (!isLengthOfLastNameValid(lastName)) {
             throw new RestValidationException(LAST_NAME_LENGTH);
         }
         return ResponseEntity.ok(studentService.findStudentsByLastName(lastName));
     }
 
     @GetMapping("/find/firstName/{firstName}")
-    public ResponseEntity<Optional<List<StudentDTO>>> provideStudentByFirstName(@PathVariable("firstName") String firstName) {
-        if (!isFirstNameValid(firstName)) {
+    public ResponseEntity<Optional<List<StudentDTO>>> provideStudentsByFirstName(@PathVariable("firstName") String firstName) {
+        if (!isLengthOfFirstNameValid(firstName)) {
             throw new RestValidationException(FIRST_NAME_LENGTH);
         }
         return ResponseEntity.ok(studentService.findStudentsByFirstName(firstName));
     }
 
     @GetMapping("/find/PESEL/{PESEL}")
-    public ResponseEntity<Optional<StudentDTO>> provideStudentByPESEL(@Validated @PathVariable("PESEL") String pesel) {
-        if (!isPeselValid(pesel)){
+    public ResponseEntity<Optional<StudentDTO>> provideStudentByPESEL(@PathVariable("PESEL") String pesel) {
+        if (!isLengthOfPeselValid(pesel)) {
             throw new RestValidationException(PESEL_LENGTH);
+        }
+        if(!arePeselDigitsCorrect(pesel)){
+            throw new RestValidationException(PESEL_DIGITS);
         }
         return ResponseEntity.ok(studentService.findStudentByPESEL(pesel));
     }
-// przyda się później
-//    @PutMapping("/updateNumbers")
-//    public ResponseEntity updateNumbersInDatabase() {
-//        studentService.updateNumberList();
-//        return ResponseEntity.ok(HttpStatus.OK);
-//    }
 
-    private boolean isFirstNameValid(String firstName) {
+    private boolean isLengthOfFirstNameValid(String firstName) {
         return firstName.length() >= 2 && firstName.length() <= 20;
     }
 
-    private boolean isSecondNameValid(String secondName) {
+    private boolean isLengthOfSecondNameValid(String secondName) {
         return secondName == null || secondName.length() <= 20;
     }
 
-    private boolean isLastNameValid(String lastName) {
+    private boolean isLengthOfLastNameValid(String lastName) {
         return lastName.length() >= 3 && lastName.length() <= 100;
     }
-    private boolean isPeselValid(String pesel){
+
+    private boolean isLengthOfPeselValid(String pesel) {
         return pesel.length() == 11;
+    }
+    private boolean arePeselDigitsCorrect(String pesel){
+        for (char c : pesel.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
