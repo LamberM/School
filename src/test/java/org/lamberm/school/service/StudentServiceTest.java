@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
 import org.lamberm.school.model.Student;
 import org.lamberm.school.repository.StudentRepository;
-import org.lamberm.school.rest.error.handler.ServiceBadRequestToDbException;
-import org.lamberm.school.rest.error.handler.ServiceNotFoundInDbException;
-import org.lamberm.school.rest.mapper.StudentMapper;
-import org.lamberm.school.rest.model.StudentDTO;
-import org.lamberm.school.rest.service.StudentService;
+import org.lamberm.school.error.handler.ServiceBadRequestToDbException;
+import org.lamberm.school.error.handler.ServiceNotFoundInDbException;
+import org.lamberm.school.mapper.StudentMapper;
+import org.lamberm.school.dto.StudentDTO;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 

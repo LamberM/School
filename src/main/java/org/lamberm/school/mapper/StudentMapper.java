@@ -1,8 +1,8 @@
-package org.lamberm.school.rest.mapper;
+package org.lamberm.school.mapper;
 
 
 import org.lamberm.school.model.Student;
-import org.lamberm.school.rest.model.StudentDTO;
+import org.lamberm.school.dto.StudentDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

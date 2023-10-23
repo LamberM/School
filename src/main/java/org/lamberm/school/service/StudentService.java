@@ -1,12 +1,12 @@
-package org.lamberm.school.rest.service;
+package org.lamberm.school.service;
 
 import lombok.RequiredArgsConstructor;
 import org.lamberm.school.model.Student;
 import org.lamberm.school.repository.StudentRepository;
-import org.lamberm.school.rest.error.handler.ServiceBadRequestToDbException;
-import org.lamberm.school.rest.error.handler.ServiceNotFoundInDbException;
-import org.lamberm.school.rest.mapper.StudentMapper;
-import org.lamberm.school.rest.model.StudentDTO;
+import org.lamberm.school.error.handler.ServiceBadRequestToDbException;
+import org.lamberm.school.error.handler.ServiceNotFoundInDbException;
+import org.lamberm.school.mapper.StudentMapper;
+import org.lamberm.school.dto.StudentDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

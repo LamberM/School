@@ -1,12 +1,11 @@
-package org.lamberm.school.rest.controller;
+package org.lamberm.school.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.lamberm.school.rest.model.StudentDTO;
-import org.lamberm.school.rest.service.StudentService;
+import org.lamberm.school.dto.StudentDTO;
+import org.lamberm.school.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

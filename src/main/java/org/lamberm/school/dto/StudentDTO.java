@@ -1,4 +1,4 @@
-package org.lamberm.school.rest.model;
+package org.lamberm.school.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

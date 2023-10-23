@@ -1,4 +1,4 @@
-package org.lamberm.school.rest.error.handler;
+package org.lamberm.school.error.handler;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
