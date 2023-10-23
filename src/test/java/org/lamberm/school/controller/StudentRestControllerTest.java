@@ -3,9 +3,8 @@ package org.lamberm.school.controller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
-import org.lamberm.school.rest.controller.StudentRestController;
-import org.lamberm.school.rest.model.StudentDTO;
-import org.lamberm.school.rest.service.StudentService;
+import org.lamberm.school.dto.StudentDTO;
+import org.lamberm.school.service.StudentService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
