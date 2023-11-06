@@ -2,33 +2,25 @@
 
 This project was implemented using Spring, Hibernate, PostgreSQL, Docker
 ## TODO
-* available endpoints in README
-* controller tests
-* integration tests
-* create new interesting function
+* integration test
 ### Must have to start server:
 * Docker
 * IntelliJ Idea
 ## To start server:
 #### Using IntelliJ Idea
-1) Create target file using:
-~~~
-mvn clean package
-~~~
-2) Copy this text, use terminal and paste:
+* Use in terminal
 ~~~
 docker-compose up
 ~~~
-Server will start at http://localhost:8080/
+Server will start at http://localhost:8080
 
 #### If you want to terminate the action
-1) Use terminal and click on your keyboard ctrl + c
-2) Copy this text, use terminal and paste:
+* Use in terminal:
 ~~~
 docker-compose down
 ~~~
 ## Available endpoints:
-
+http://localhost:8080/swagger-ui/index.html#/
 ## Response codes
 #### 200 OK - when operation is successful
 #### 400 Bad Request - when validation error occurs
