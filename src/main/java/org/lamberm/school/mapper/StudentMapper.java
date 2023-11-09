@@ -14,7 +14,6 @@ public interface StudentMapper {
         } else {
             return Student
                     .builder()
-                    .id(studentDTO.getId())
                     .pesel(studentDTO.getPesel())
                     .firstName(studentDTO.getFirstName())
                     .secondName(studentDTO.getSecondName())
@@ -29,7 +28,6 @@ public interface StudentMapper {
         } else {
             return StudentDTO
                     .builder()
-                    .id(student.getId())
                     .pesel(student.getPesel())
                     .firstName(student.getFirstName())
                     .secondName(student.getSecondName())
