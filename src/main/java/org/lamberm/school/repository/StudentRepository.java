@@ -14,14 +14,14 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT student FROM Student student  WHERE student.firstName LIKE %:firstName%")
     List<Student> findStudentsByFirstName(@Param("firstName") String firstName);
 
-    @Query("SELECT CASE WHEN COUNT(student) > 0 THEN TRUE ELSE FALSE END FROM Student student  WHERE student.firstName = :firstName")
-    Boolean isFirstNameExist(@Param("firstName") String firstName);
+    @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.firstName = :firstName")
+    boolean isFirstNameExist(@Param("firstName") String firstName);
 
     @Query("SELECT student FROM Student student  WHERE student.lastName LIKE %:lastName%")
     List<Student> findStudentsByLastName(@Param("lastName") String lastName);
 
-    @Query("SELECT CASE WHEN COUNT(student) > 0 THEN TRUE ELSE FALSE END  FROM Student student WHERE student.lastName = :lastName")
-    Boolean isLastNameExist(@Param("lastName") String lastName);
+    @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.lastName = :lastName")
+    boolean isLastNameExist(@Param("lastName") String lastName);
 
     @Query("SELECT student FROM Student student WHERE student.pesel LIKE %:pesel%")
     Optional<Student> findStudentByPESEL(@Param("pesel") String pesel);
