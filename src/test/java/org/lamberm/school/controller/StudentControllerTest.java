@@ -1,6 +1,5 @@
 package org.lamberm.school.controller;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
 import org.lamberm.school.dto.StudentDTO;
@@ -17,104 +16,63 @@ class StudentControllerTest implements UnitTest {
     StudentService studentServiceMock;
 
     @Test
-    void givenStudent_whenAddStudentToDatabase_thenAddStudent() {
-        //given
+    void shouldSaveStudent() {
         StudentDTO studentDTO = new StudentDTO("12345678910", "first", "second", "last");
-        //when
-        systemUnderTest.addStudentToDatabase(studentDTO);
-        //then
+
+        systemUnderTest.saveStudent(studentDTO);
+
         verify(studentServiceMock).addStudent(studentDTO);
     }
 
     @Test
-    void givenId_whenDeleteStudentByIdFromDatabase_thenDeleteStudent() {
-        //given
+    void shouldDeleteStudent() {
         Integer id = 1;
-        //when
-        systemUnderTest.deleteStudentByIdFromDatabase(id);
-        //then
+
+        systemUnderTest.deleteStudentById(id);
+
         verify(studentServiceMock).deleteStudentById(id.longValue());
     }
 
     @Test
-    void whenProvideStudentsList_thenGetStudents() {
-        //given
-        //when
+    void shouldProvideStudentsList() {
         systemUnderTest.provideStudentsList();
-        //then
+
         verify(studentServiceMock).findAllStudents();
     }
 
     @Test
-    void givenId_whenProvideStudentById_thenGetStudent() {
-        //given
+    void shouldProvideStudentById() {
         Integer id = 1;
-        //when
+
         systemUnderTest.provideStudentById(id);
-        //then
+
         verify(studentServiceMock).findStudentById(id.longValue());
     }
 
     @Test
-    void givenLastName_whenProvideStudentsByLastName_thenGetStudents() {
-        //given
+    void shouldProvideStudentsByLastName() {
         String lastName = "test";
-        //when
+
         systemUnderTest.provideStudentsByLastName(lastName);
-        //then
+
         verify(studentServiceMock).findStudentsByLastName(lastName);
     }
 
     @Test
-    void givenLastName_whenProvideStudentsByLastName_thenRestErrorHandler() {
-        //given
-        String lastName = "";
-        //when
-        //then
-        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByLastName(lastName));
-    }
-    @Test
-    void givenFirstName_whenProvideStudentsByFirstName_thenGetStudents() {
-        //given
+    void shouldProvideStudentsByFirstName() {
         String firstName = "test";
-        //when
+
         systemUnderTest.provideStudentsByFirstName(firstName);
-        //then
+
         verify(studentServiceMock).findStudentsByFirstName(firstName);
     }
 
     @Test
-    void givenFirstName_whenProvideStudentsByFirstName_thenRestErrorHandler() {
-        //given
-        String firstName = "";
-        //when
-        //then
-        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByFirstName(firstName));
-    }
-    @Test
-    void givenPesel_whenProvideStudentByPESEL_thenGetStudent() {
-        //given
+    void shouldProvideStudentByPESEL() {
         String pesel = "12345678910";
-        //when
-        systemUnderTest.provideStudentByPESEL(pesel);
-        //then
-        verify(studentServiceMock).findStudentByPESEL(pesel);
-    }
 
-    @Test
-    void givenNotDigitsPesel_whenProvideStudentByPESEL_thenRestErrorHandler() {
-        //given
-        String pesel = "testtesttes";
-        //when
-        //then
-        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
-    }
-    @Test
-    void givenTooShortPesel_whenProvideStudentByPESEL_thenRestErrorHandler() {
-        //given
-        String pesel = "123";
-        //when
-        //then
-        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
+        systemUnderTest.provideStudentByPESEL(pesel);
+
+        verify(studentServiceMock).findStudentByPESEL(pesel);
     }
 }

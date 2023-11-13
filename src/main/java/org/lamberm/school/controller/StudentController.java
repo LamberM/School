@@ -2,83 +2,62 @@ package org.lamberm.school.controller;
 
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.pl.PESEL;
 import org.lamberm.school.dto.StudentDTO;
 import org.lamberm.school.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Validated
 public class StudentController {
     private final StudentService studentService;
 
-    public static class RestValidationException extends RuntimeException {
-        public RestValidationException(String message) {
-            super(message);
-        }
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity addStudentToDatabase(@Valid @RequestBody StudentDTO studentDTO) {
+    @PostMapping("/students")
+    public ResponseEntity saveStudent(@Valid @RequestBody StudentDTO studentDTO) {
         studentService.addStudent(studentDTO);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteStudentByIdFromDatabase(@PathVariable("id") Integer id) {
+    @DeleteMapping("/students/{id}")
+    public ResponseEntity deleteStudentById(@PathVariable("id") Integer id) {
         studentService.deleteStudentById(id.longValue());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/students")
     public ResponseEntity<List<StudentDTO>> provideStudentsList() {
         return ResponseEntity.ok(studentService.findAllStudents());
     }
 
-    @GetMapping("/find/id/{id}")
+    @GetMapping("/students/{id}")
     public ResponseEntity<Optional<StudentDTO>> provideStudentById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(studentService.findStudentById(id.longValue()));
     }
 
-    @GetMapping("/find/lastName/{lastName}")
-    public ResponseEntity<List<StudentDTO>> provideStudentsByLastName(@PathVariable("lastName") String lastName) {
-        if(!isContainOnlyLetters(lastName)){
-            throw new RestValidationException("Last name must contain only letters");
-        }
+    @GetMapping("/students/{lastName}")
+    public ResponseEntity<List<StudentDTO>> provideStudentsByLastName(@Valid @PathVariable("lastName") @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only letters") @Size(min = 3, max = 100, message = "Last name length must not be less than 3 and more than 100") @NotBlank(message = "Last name must not be blank") String lastName) {
         return ResponseEntity.ok(studentService.findStudentsByLastName(lastName));
     }
 
-    @GetMapping("/find/firstName/{firstName}")
-    public ResponseEntity<List<StudentDTO>> provideStudentsByFirstName(@PathVariable("firstName") String firstName) {
-        if(!isContainOnlyLetters(firstName)){
-            throw new RestValidationException("First name must contain only letters");
-        }
+    @GetMapping("/students/{firstName}")
+    public ResponseEntity<List<StudentDTO>> provideStudentsByFirstName(@Valid @PathVariable("firstName") @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters") @NotBlank(message = "First name must not be blank") @Size(min = 2, max = 20, message = "First name length must not be less than 2 and more than 20") String firstName) {
         return ResponseEntity.ok(studentService.findStudentsByFirstName(firstName));
     }
 
-    @GetMapping("/find/PESEL/{PESEL}")
-    public ResponseEntity<Optional<StudentDTO>> provideStudentByPESEL(@PathVariable("PESEL") String pesel) {
-        if(!isPeselDigitsCorrect(pesel)){
-            throw new RestValidationException("PESEL must be digits");
-        }
-        if(!isPeselLengthCorrect(pesel)){
-            throw new RestValidationException("PESEL length requires 11 characters");
-        }
+    @GetMapping("/students/{PESEL}")
+    public ResponseEntity<Optional<StudentDTO>> provideStudentByPESEL(@Valid @PathVariable("PESEL") @PESEL String pesel) {
         return ResponseEntity.ok(studentService.findStudentByPESEL(pesel));
-    }
-    private boolean isPeselLengthCorrect(String pesel){
-        return pesel.length() == 11;
-    }
-    private boolean isPeselDigitsCorrect(String pesel){
-        return pesel.matches("^[0-9]+$");
-    }
-    private boolean isContainOnlyLetters(String text){
-        return text.matches("^[a-zA-Z]+$");
     }
 }
