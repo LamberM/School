@@ -53,7 +53,7 @@ public class StudentService {
             throw new ServiceNotFoundInDbException(LIST_IS_EMPTY);
         } else {
             List<Student> studentList = studentRepository.findAll();
-            return Optional.of(studentList.stream().map(this::convertToDTO).toList());
+            return Optional.of(studentList.stream().map(studentMapper::map).toList());
         }
     }
 
@@ -64,7 +64,7 @@ public class StudentService {
         } else {
             if (isIdExist(id)) {
                 Optional<Student> student = studentRepository.findById(id);
-                return student.map(this::convertToDTO);
+                return student.map(studentMapper::map);
             } else {
                 throw new ServiceNotFoundInDbException(ID_NOT_EXIST);
             }
@@ -78,7 +78,7 @@ public class StudentService {
         } else {
             if (Boolean.TRUE.equals(studentRepository.isLastNameExist(lastName))) {
                 List<Student> studentList = studentRepository.findStudentsByLastName(lastName);
-                return Optional.of(studentList.stream().map(this::convertToDTO).toList());
+                return Optional.of(studentList.stream().map(studentMapper::map).toList());
             } else {
                 throw new ServiceNotFoundInDbException(STUDENT_NOT_EXIST);
             }
@@ -92,7 +92,7 @@ public class StudentService {
         } else {
             if (Boolean.TRUE.equals(studentRepository.isFirstNameExist(firstName))) {
                 List<Student> studentList = studentRepository.findStudentsByFirstName(firstName);
-                return Optional.of(studentList.stream().map(this::convertToDTO).toList());
+                return Optional.of(studentList.stream().map(studentMapper::map).toList());
             } else {
                 throw new ServiceNotFoundInDbException(STUDENT_NOT_EXIST);
             }
@@ -106,16 +106,11 @@ public class StudentService {
         } else {
             if (isPESELexist(pesel)) {
                 Optional<Student> student = studentRepository.findStudentByPESEL(pesel);
-                return student.map(this::convertToDTO);
+                return student.map(studentMapper::map);
             } else {
                 throw new ServiceNotFoundInDbException(PESEL_NOT_EXIST);
             }
         }
-    }
-
-
-    private StudentDTO convertToDTO(Student student) {
-        return studentMapper.map(student);
     }
 
     private boolean isListEmpty() {

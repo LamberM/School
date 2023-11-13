@@ -14,7 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/student")
 @RequiredArgsConstructor
-public class StudentRestController {
+public class StudentController {
     private final StudentService studentService;
     private static final String FIRST_NAME_LENGTH = "First name length can't be less than 2 and more than 20";
     private static final String SECOND_NAME_LENGTH = "Second name length can't be more than 20";
