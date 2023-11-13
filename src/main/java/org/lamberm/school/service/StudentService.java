@@ -20,6 +20,7 @@ import java.util.Optional;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
+
     @Transactional
     public void addStudent(StudentDTO studentDTO) {
         Student student = studentMapper.map(studentDTO);
@@ -32,62 +33,57 @@ public class StudentService {
 
     @Transactional
     public void deleteStudentById(Long id) {
-            if (isIdExist(id)) {
-                studentRepository.deleteById(id);
-            } else {
-                throw new IdNotExistException();
-            }
+        if (isIdExist(id)) {
+            studentRepository.deleteById(id);
+        } else {
+            throw new IdNotExistException();
+        }
     }
 
     @Transactional(readOnly = true)
     public List<StudentDTO> findAllStudents() {
-            List<Student> studentList = studentRepository.findAll();
-            return studentList.stream().map(this::convertToDTO).toList();
+        List<Student> studentList = studentRepository.findAll();
+        return Optional.of(studentList.stream().map(studentMapper::map).toList());
     }
 
     @Transactional(readOnly = true)
     public Optional<StudentDTO> findStudentById(Long id) {
-            if (isIdExist(id)) {
-                Optional<Student> student = studentRepository.findById(id);
-                return student.map(this::convertToDTO);
-            } else {
-                throw new IdNotExistException();
-            }
+        if (isIdExist(id)) {
+            Optional<Student> student = studentRepository.findById(id);
+            return student.map(studentMapper::map);
+        } else {
+            throw new IdNotExistException();
+        }
     }
 
     @Transactional(readOnly = true)
     public List<StudentDTO> findStudentsByLastName(String lastName) {
-            if (studentRepository.isLastNameExist(lastName)) {
-                List<Student> studentList = studentRepository.findStudentsByLastName(lastName);
-                return studentList.stream().map(this::convertToDTO).toList();
-            } else {
-                throw new StudentNotExistException();
-            }
+        if (studentRepository.isLastNameExist(lastName)) {
+            List<Student> studentList = studentRepository.findStudentsByLastName(lastName);
+            return studentList.stream().map(studentMapper::map).toList();
+        } else {
+            throw new StudentNotExistException();
+        }
     }
 
     @Transactional(readOnly = true)
     public List<StudentDTO> findStudentsByFirstName(String firstName) {
-            if (studentRepository.isFirstNameExist(firstName)) {
-                List<Student> studentList = studentRepository.findStudentsByFirstName(firstName);
-                return studentList.stream().map(this::convertToDTO).toList();
-            } else {
-                throw new StudentNotExistException();
-            }
+        if (studentRepository.isFirstNameExist(firstName)) {
+            List<Student> studentList = studentRepository.findStudentsByFirstName(firstName);
+            return studentList.stream().map(studentMapper::map).toList();
+        } else {
+            throw new StudentNotExistException();
+        }
     }
 
     @Transactional(readOnly = true)
     public Optional<StudentDTO> findStudentByPESEL(String pesel) {
-            if (isPESELexist(pesel)) {
-                Optional<Student> student = studentRepository.findStudentByPESEL(pesel);
-                return student.map(this::convertToDTO);
-            } else {
-                throw new PeselNotExistException();
-            }
-    }
-
-
-    private StudentDTO convertToDTO(Student student) {
-        return studentMapper.map(student);
+        if (isPESELexist(pesel)) {
+            Optional<Student> student = studentRepository.findStudentByPESEL(pesel);
+            return student.map(studentMapper::map);
+        } else {
+            throw new PeselNotExistException();
+        }
     }
 
     private boolean isIdExist(Long id) {

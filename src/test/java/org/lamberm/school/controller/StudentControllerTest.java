@@ -10,9 +10,9 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.verify;
 
-class StudentRestControllerTest implements UnitTest {
+class StudentControllerTest implements UnitTest {
     @InjectMocks
-    StudentRestController systemUnderTest;
+    StudentController systemUnderTest;
     @Mock
     StudentService studentServiceMock;
 
@@ -71,7 +71,7 @@ class StudentRestControllerTest implements UnitTest {
         String lastName = "";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentsByLastName(lastName));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByLastName(lastName));
     }
     @Test
     void givenFirstName_whenProvideStudentsByFirstName_thenGetStudents() {
@@ -89,7 +89,7 @@ class StudentRestControllerTest implements UnitTest {
         String firstName = "";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentsByFirstName(firstName));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByFirstName(firstName));
     }
     @Test
     void givenPesel_whenProvideStudentByPESEL_thenGetStudent() {
@@ -107,7 +107,7 @@ class StudentRestControllerTest implements UnitTest {
         String pesel = "testtesttes";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
     }
     @Test
     void givenTooShortPesel_whenProvideStudentByPESEL_thenRestErrorHandler() {
@@ -115,6 +115,6 @@ class StudentRestControllerTest implements UnitTest {
         String pesel = "123";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
     }
 }

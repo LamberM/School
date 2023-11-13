@@ -15,7 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/student")
 @RequiredArgsConstructor
-public class StudentRestController {
+public class StudentController {
     private final StudentService studentService;
 
     public static class RestValidationException extends RuntimeException {
