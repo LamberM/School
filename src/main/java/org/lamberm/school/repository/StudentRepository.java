@@ -12,13 +12,13 @@ import java.util.Optional;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT student FROM Student student  WHERE student.firstName LIKE %:firstName%")
-    List<Student> findStudentsByFirstName(@Param("firstName") String firstName);
+    List<Student> getStudentsByFirstName(@Param("firstName") String firstName);
 
     @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.firstName = :firstName")
     boolean isFirstNameExist(@Param("firstName") String firstName);
 
     @Query("SELECT student FROM Student student  WHERE student.lastName LIKE %:lastName%")
-    List<Student> findStudentsByLastName(@Param("lastName") String lastName);
+    List<Student> getStudentsByLastName(@Param("lastName") String lastName);
 
     @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.lastName = :lastName")
     boolean isLastNameExist(@Param("lastName") String lastName);
@@ -26,5 +26,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT student FROM Student student WHERE student.pesel LIKE %:pesel%")
     Optional<Student> findStudentByPESEL(@Param("pesel") String pesel);
 
-
+    @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.pesel = :pesel")
+    boolean isPeselExist(@Param("pesel") String pesel);
+    @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.id = :id")
+    boolean isIdExist(@Param("id") Long id);
 }
