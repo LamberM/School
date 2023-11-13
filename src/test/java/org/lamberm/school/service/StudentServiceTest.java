@@ -3,12 +3,14 @@ package org.lamberm.school.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
+import org.lamberm.school.dto.StudentDTO;
+import org.lamberm.school.error.handler.IdNotExistException;
+import org.lamberm.school.error.handler.PeselExistException;
+import org.lamberm.school.error.handler.PeselNotExistException;
+import org.lamberm.school.error.handler.StudentNotExistException;
+import org.lamberm.school.mapper.StudentMapper;
 import org.lamberm.school.model.Student;
 import org.lamberm.school.repository.StudentRepository;
-import org.lamberm.school.error.handler.ServiceBadRequestToDbException;
-import org.lamberm.school.error.handler.ServiceNotFoundInDbException;
-import org.lamberm.school.mapper.StudentMapper;
-import org.lamberm.school.dto.StudentDTO;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -29,31 +31,6 @@ class StudentServiceTest implements UnitTest {
     StudentMapper studentMapperMock;
 
     @Test
-    void validationTest() {
-        //given
-        Long id = 1L;
-        String pesel = "12345678910";
-        String name = "test";
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.findAllStudents())
-                .isInstanceOf(ServiceNotFoundInDbException.class)
-                .hasMessage("List is empty");
-        assertThatThrownBy(() -> systemUnderTest.findStudentById(id))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
-                .hasMessage("List is empty");
-        assertThatThrownBy(() -> systemUnderTest.findStudentByPESEL(pesel))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
-                .hasMessage("List is empty");
-        assertThatThrownBy(() -> systemUnderTest.findStudentsByFirstName(name))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
-                .hasMessage("List is empty");
-        assertThatThrownBy(() -> systemUnderTest.findStudentsByLastName(name))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
-                .hasMessage("List is empty");
-    }
-
-    @Test
     void givenStudentMock_whenAddStudent_thenInsertToDatabase() {
         //given
         StudentDTO studentDTOMock = mock(StudentDTO.class);
@@ -72,14 +49,14 @@ class StudentServiceTest implements UnitTest {
         //given
         Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
         studentRepositoryMock.save(student1);
-        StudentDTO studentDTO = new StudentDTO(2L, "12345678910", "test", "test", "test");
+        StudentDTO studentDTO = new StudentDTO( "12345678910", "test", "test", "test");
         Student student = mock(Student.class);
         when(studentMapperMock.map(studentDTO)).thenReturn(student);
         when(studentRepositoryMock.findStudentByPESEL(student.getPesel())).thenReturn(Optional.of(student1));
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.addStudent(studentDTO))
-                .isInstanceOf(ServiceBadRequestToDbException.class)
+                .isInstanceOf(PeselExistException.class)
                 .hasMessage("PESEL exist");
     }
 
@@ -90,7 +67,6 @@ class StudentServiceTest implements UnitTest {
         Student studentMock = mock(Student.class);
         List<Student> studentList = new ArrayList<>();
         studentList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         given(studentRepositoryMock.findById(id)).willReturn(Optional.of(studentMock));
         //when
         systemUnderTest.deleteStudentById(id);
@@ -108,11 +84,10 @@ class StudentServiceTest implements UnitTest {
         Student studentMock = mock(Student.class);
         List<Student> studentList = new ArrayList<>();
         studentList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.deleteStudentById(id))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
+                .isInstanceOf(IdNotExistException.class)
                 .hasMessage("ID doesn't exist");
     }
 
@@ -138,7 +113,6 @@ class StudentServiceTest implements UnitTest {
         studentRepositoryMock.save(studentMock);
         List<Student> studentsList = new ArrayList<>();
         studentsList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentsList);
         when(studentRepositoryMock.findById(studentMock.getId())).thenReturn(Optional.of(studentMock));
         when(studentMapperMock.map(studentMock)).thenReturn(studentDTOMock);
         //when
@@ -154,11 +128,10 @@ class StudentServiceTest implements UnitTest {
         Student studentMock = mock(Student.class);
         List<Student> studentList = new ArrayList<>();
         studentList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.findStudentById(id))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
+                .isInstanceOf(IdNotExistException.class)
                 .hasMessage("ID doesn't exist");
     }
 
@@ -172,12 +145,12 @@ class StudentServiceTest implements UnitTest {
         List<Student> studentList = new ArrayList<>();
         studentList.add(student1);
         studentList.add(student2);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         given(studentRepositoryMock.isLastNameExist(student1.getLastName())).willReturn(Boolean.TRUE);
+        given(studentRepositoryMock.findStudentsByLastName("last")).willReturn(studentList);
         //when
-        boolean isPresent = systemUnderTest.findStudentsByLastName(student1.getLastName()).isPresent();
+        boolean isEmpty = systemUnderTest.findStudentsByLastName(student1.getLastName()).isEmpty();
         //then
-        Assertions.assertTrue(isPresent);
+        Assertions.assertFalse(isEmpty);
     }
 
     @Test
@@ -186,11 +159,10 @@ class StudentServiceTest implements UnitTest {
         Student studentMock = mock(Student.class);
         List<Student> studentList = new ArrayList<>();
         studentList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.findStudentsByLastName(studentMock.getLastName()))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
+                .isInstanceOf(StudentNotExistException.class)
                 .hasMessage("Student doesn't exist");
     }
 
@@ -204,12 +176,12 @@ class StudentServiceTest implements UnitTest {
         List<Student> studentList = new ArrayList<>();
         studentList.add(student1);
         studentList.add(student2);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         given(studentRepositoryMock.isFirstNameExist(student1.getFirstName())).willReturn(Boolean.TRUE);
+        given(studentRepositoryMock.findStudentsByFirstName("first")).willReturn(studentList);
         //when
-        boolean isPresent = systemUnderTest.findStudentsByFirstName(student1.getFirstName()).isPresent();
+        boolean isEmpty = systemUnderTest.findStudentsByFirstName(student1.getFirstName()).isEmpty();
         //then
-        Assertions.assertTrue(isPresent);
+        Assertions.assertFalse(isEmpty);
     }
 
     @Test
@@ -218,11 +190,10 @@ class StudentServiceTest implements UnitTest {
         Student studentMock = mock(Student.class);
         List<Student> studentList = new ArrayList<>();
         studentList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.findStudentsByFirstName(studentMock.getFirstName()))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
+                .isInstanceOf(StudentNotExistException.class)
                 .hasMessage("Student doesn't exist");
     }
 
@@ -234,7 +205,6 @@ class StudentServiceTest implements UnitTest {
         StudentDTO studentDTOMock = mock(StudentDTO.class);
         List<Student> studentsList = new ArrayList<>();
         studentsList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentsList);
         when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(Optional.ofNullable(studentMock));
         when(studentMapperMock.map(studentMock)).thenReturn(studentDTOMock);
         //when
@@ -250,11 +220,10 @@ class StudentServiceTest implements UnitTest {
         Student studentMock = mock(Student.class);
         List<Student> studentList = new ArrayList<>();
         studentList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentList);
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.findStudentByPESEL(pesel))
-                .isInstanceOf(ServiceNotFoundInDbException.class)
+                .isInstanceOf(PeselNotExistException.class)
                 .hasMessage("PESEL doesn't exist");
     }
 }
