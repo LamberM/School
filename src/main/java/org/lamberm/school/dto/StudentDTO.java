@@ -6,14 +6,13 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.pl.PESEL;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentDTO {
-    @Pattern(regexp = "^[0-9]+$", message = "PESEL must be digits")
-    @NotBlank(message = "PESEL must not be blank")
-    @Size(min = 11, max = 11, message = "PESEL length requires 11 characters")
+    @PESEL
     private String pesel;
     @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters")
     @NotBlank(message = "First name must not be blank")
