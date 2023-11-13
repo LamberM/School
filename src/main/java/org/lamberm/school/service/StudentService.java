@@ -43,7 +43,7 @@ public class StudentService {
     @Transactional(readOnly = true)
     public List<StudentDTO> findAllStudents() {
         List<Student> studentList = studentRepository.findAll();
-        return Optional.of(studentList.stream().map(studentMapper::map).toList());
+        return studentList.stream().map(studentMapper::map).toList();
     }
 
     @Transactional(readOnly = true)
