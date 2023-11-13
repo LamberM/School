@@ -1,6 +1,7 @@
 package org.lamberm.school.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
 import org.lamberm.school.dto.StudentDTO;
@@ -19,8 +20,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class StudentServiceTest implements UnitTest {
     @InjectMocks
@@ -30,200 +32,161 @@ class StudentServiceTest implements UnitTest {
     @Mock
     StudentMapper studentMapperMock;
 
-    @Test
-    void givenStudentMock_whenAddStudent_thenInsertToDatabase() {
-        //given
+    @Nested
+    class addStudentTest {
         StudentDTO studentDTOMock = mock(StudentDTO.class);
         Student studentMock = mock(Student.class);
-        when(studentMapperMock.map(studentDTOMock)).thenReturn(studentMock);
-        //when
-        systemUnderTest.addStudent(studentDTOMock);
-        //then
-        verify(studentMapperMock).map(studentDTOMock);
-        verify(studentRepositoryMock).save(studentMock);
-        Assertions.assertNotNull(studentRepositoryMock.findById(studentMock.getId()));
+
+        @Test
+        void shouldAddStudent() {
+            when(studentMapperMock.map(studentDTOMock)).thenReturn(studentMock);
+
+            systemUnderTest.addStudent(studentDTOMock);
+
+            verify(studentMapperMock).map(studentDTOMock);
+            verify(studentRepositoryMock).save(studentMock);
+            Assertions.assertNotNull(studentRepositoryMock.findById(studentMock.getId()));
+        }
+
+        @Test
+        void shouldNotAddStudentStudentExist() {
+            when(studentRepositoryMock.isPeselExist(studentDTOMock.getPesel())).thenReturn(true);
+
+            assertThatThrownBy(() -> systemUnderTest.addStudent(studentDTOMock))
+                    .isInstanceOf(PeselExistException.class)
+                    .hasMessage("PESEL exist");
+        }
     }
 
-    @Test
-    void givenStudents_whenAddStudent_thenWillThrowException() {
-        //given
-        Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
-        studentRepositoryMock.save(student1);
-        StudentDTO studentDTO = new StudentDTO( "12345678910", "test", "test", "test");
-        Student student = mock(Student.class);
-        when(studentMapperMock.map(studentDTO)).thenReturn(student);
-        when(studentRepositoryMock.findStudentByPESEL(student.getPesel())).thenReturn(Optional.of(student1));
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.addStudent(studentDTO))
-                .isInstanceOf(PeselExistException.class)
-                .hasMessage("PESEL exist");
-    }
-
-    @Test
-    void givenExistingIdWithStudentsList_whenDeleteStudent_thenStudentIsDeleted() {
-        //given
+    @Nested
+    class deleteStudentByIdTest {
         Long id = 1L;
-        Student studentMock = mock(Student.class);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(studentMock);
-        given(studentRepositoryMock.findById(id)).willReturn(Optional.of(studentMock));
-        //when
-        systemUnderTest.deleteStudentById(id);
-        //then
-        verify(studentRepositoryMock).deleteById(id);
-        boolean isEmptyList = systemUnderTest.findStudentById(id).isEmpty();
-        Assertions.assertTrue(isEmptyList);
+
+        @Test
+        void shouldDeleteStudent() {
+            when(studentRepositoryMock.isIdExist(id)).thenReturn(true);
+
+            systemUnderTest.deleteStudentById(id);
+            verify(studentRepositoryMock).deleteById(id);
+        }
+
+        @Test
+        void shouldNotDeleteStudentIdNotExist() {
+            when(studentRepositoryMock.isIdExist(id)).thenReturn(false);
+
+            assertThatThrownBy(() -> systemUnderTest.deleteStudentById(id))
+                    .isInstanceOf(IdNotExistException.class)
+                    .hasMessage("ID doesn't exist");
+        }
     }
 
+    @Nested
+    class findAllStudentsTest {
+        @Test
+        void shouldFindAllStudents() {
+            systemUnderTest.findAllStudents();
 
-    @Test
-    void givenNotExistingId_whenDeleteStudent_thenWillThrowException() {
-        //given
-        Long id = 2L;
-        Student studentMock = mock(Student.class);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(studentMock);
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.deleteStudentById(id))
-                .isInstanceOf(IdNotExistException.class)
-                .hasMessage("ID doesn't exist");
+            verify(studentRepositoryMock).findAll();
+        }
     }
 
-    @Test
-    void givenStudentsList_whenFindAllStudents_thenGetStudents() {
-        //given
-        Student studentMock = mock(Student.class);
-        List<Student> studentsList = new ArrayList<>();
-        studentsList.add(studentMock);
-        given(studentRepositoryMock.findAll()).willReturn(studentsList);
-        //when
-        systemUnderTest.findAllStudents();
-        //then
-        boolean isEmptyList = systemUnderTest.findAllStudents().isEmpty();
-        Assertions.assertFalse(isEmptyList);
+    @Nested
+    class findStudentById {
+        Long id = 1L;
+
+        @Test
+        void shouldFindStudentById() {
+            var studentMock = mock(Student.class);
+            var studentDtoMock = mock(StudentDTO.class);
+            when(studentRepositoryMock.isIdExist(id)).thenReturn(true);
+            when(studentRepositoryMock.findById(id)).thenReturn(Optional.of(studentMock));
+            when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
+
+            var result = systemUnderTest.findStudentById(id);
+
+            Assertions.assertEquals(studentDtoMock, result);
+        }
+
+        @Test
+        void shouldNotFindStudentIdNotExist() {
+            assertThatThrownBy(() -> systemUnderTest.findStudentById(id))
+                    .isInstanceOf(IdNotExistException.class)
+                    .hasMessage("ID doesn't exist");
+        }
     }
 
-    @Test
-    void givenStudentMock_whenFindStudentById_thenGetStudent() {
-        //given
-        Student studentMock = mock(Student.class);
-        StudentDTO studentDTOMock = mock(StudentDTO.class);
-        studentRepositoryMock.save(studentMock);
-        List<Student> studentsList = new ArrayList<>();
-        studentsList.add(studentMock);
-        when(studentRepositoryMock.findById(studentMock.getId())).thenReturn(Optional.of(studentMock));
-        when(studentMapperMock.map(studentMock)).thenReturn(studentDTOMock);
-        //when
-        boolean isPresent = systemUnderTest.findStudentById(studentMock.getId()).isPresent();
-        //then
-        Assertions.assertTrue(isPresent);
+    @Nested
+    class findStudentsByLastName {
+        String lastName = "test";
+
+        @Test
+        void shouldFindStudents() {
+            var studentMock = mock(Student.class);
+            List<Student> studentsList = new ArrayList<>();
+            studentsList.add(studentMock);
+            when(studentRepositoryMock.isLastNameExist(lastName)).thenReturn(true);
+            when(studentRepositoryMock.getStudentsByLastName(lastName)).thenReturn(studentsList);
+
+            var isEmpty = systemUnderTest.findStudentsByLastName(lastName).isEmpty();
+
+            Assertions.assertFalse(isEmpty);
+        }
+
+        @Test
+        void shouldNotFindStudentsLastNameNotExist() {
+            assertThatThrownBy(() -> systemUnderTest.findStudentsByLastName(lastName))
+                    .isInstanceOf(StudentNotExistException.class)
+                    .hasMessage("Student doesn't exist");
+        }
     }
 
-    @Test
-    void givenNotExistingId_whenFindById_thenWillThrowException() {
-        //given
-        Long id = 2L;
-        Student studentMock = mock(Student.class);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(studentMock);
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.findStudentById(id))
-                .isInstanceOf(IdNotExistException.class)
-                .hasMessage("ID doesn't exist");
+    @Nested
+    class findStudentsByFirstName {
+        String firstName = "test";
+
+        @Test
+        void shouldFindStudents() {
+            var studentMock = mock(Student.class);
+            List<Student> studentsList = new ArrayList<>();
+            studentsList.add(studentMock);
+            when(studentRepositoryMock.isFirstNameExist(firstName)).thenReturn(true);
+            when(studentRepositoryMock.getStudentsByFirstName(firstName)).thenReturn(studentsList);
+
+            var isEmpty = systemUnderTest.findStudentsByFirstName(firstName).isEmpty();
+
+            Assertions.assertFalse(isEmpty);
+        }
+
+        @Test
+        void shouldNotFindStudentsFirstNameNotExist() {
+            assertThatThrownBy(() -> systemUnderTest.findStudentsByFirstName(firstName))
+                    .isInstanceOf(StudentNotExistException.class)
+                    .hasMessage("Student doesn't exist");
+        }
     }
 
-    @Test
-    void givenStudentsListWithStudents_whenFindStudentsByLastName_thenGetStudents() {
-        //given
-        Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
-        Student student2 = new Student(2L, "12345678910", "first", "", "last", "");
-        studentRepositoryMock.save(student1);
-        studentRepositoryMock.save(student2);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(student1);
-        studentList.add(student2);
-        given(studentRepositoryMock.isLastNameExist(student1.getLastName())).willReturn(Boolean.TRUE);
-        given(studentRepositoryMock.findStudentsByLastName("last")).willReturn(studentList);
-        //when
-        boolean isEmpty = systemUnderTest.findStudentsByLastName(student1.getLastName()).isEmpty();
-        //then
-        Assertions.assertFalse(isEmpty);
-    }
-
-    @Test
-    void givenStudentsListWithStudents_whenFindStudentsByLastName_thenWillThrowException() {
-        //given
-        Student studentMock = mock(Student.class);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(studentMock);
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.findStudentsByLastName(studentMock.getLastName()))
-                .isInstanceOf(StudentNotExistException.class)
-                .hasMessage("Student doesn't exist");
-    }
-
-    @Test
-    void givenStudentsListWithStudents_whenFindStudentsByFirstName_thenGetStudents() {
-        //given
-        Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
-        Student student2 = new Student(2L, "12345678910", "first", "", "last", "");
-        studentRepositoryMock.save(student1);
-        studentRepositoryMock.save(student2);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(student1);
-        studentList.add(student2);
-        given(studentRepositoryMock.isFirstNameExist(student1.getFirstName())).willReturn(Boolean.TRUE);
-        given(studentRepositoryMock.findStudentsByFirstName("first")).willReturn(studentList);
-        //when
-        boolean isEmpty = systemUnderTest.findStudentsByFirstName(student1.getFirstName()).isEmpty();
-        //then
-        Assertions.assertFalse(isEmpty);
-    }
-
-    @Test
-    void givenStudentsListWithStudents_whenFindStudentsByFirstName_thenWillThrowException() {
-        //given
-        Student studentMock = mock(Student.class);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(studentMock);
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.findStudentsByFirstName(studentMock.getFirstName()))
-                .isInstanceOf(StudentNotExistException.class)
-                .hasMessage("Student doesn't exist");
-    }
-
-    @Test
-    void givenStudentMock_whenFindStudentByPesel_thenGetStudent() {
-        //given
+    @Nested
+    class findStudentByPesel {
         String pesel = "012345678910";
-        Student studentMock = mock(Student.class);
-        StudentDTO studentDTOMock = mock(StudentDTO.class);
-        List<Student> studentsList = new ArrayList<>();
-        studentsList.add(studentMock);
-        when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(Optional.ofNullable(studentMock));
-        when(studentMapperMock.map(studentMock)).thenReturn(studentDTOMock);
-        //when
-        boolean isPresent = systemUnderTest.findStudentByPESEL(pesel).isPresent();
-        //then
-        Assertions.assertTrue(isPresent);
-    }
 
-    @Test
-    void givenNotExistingPesel_whenFindStudentByPesel_thenWillThrowException() {
-        //given
-        String pesel = "012345678910";
-        Student studentMock = mock(Student.class);
-        List<Student> studentList = new ArrayList<>();
-        studentList.add(studentMock);
-        //when
-        //then
-        assertThatThrownBy(() -> systemUnderTest.findStudentByPESEL(pesel))
-                .isInstanceOf(PeselNotExistException.class)
-                .hasMessage("PESEL doesn't exist");
+        @Test
+        void shouldFindStudent() {
+            var studentMock = mock(Student.class);
+            var studentDtoMock = mock(StudentDTO.class);
+            when(studentRepositoryMock.isPeselExist(pesel)).thenReturn(true);
+            when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(studentMock);
+            when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
+
+            var result = systemUnderTest.findStudentByPESEL(pesel);
+
+            Assertions.assertEquals(studentDtoMock, result);
+        }
+
+        @Test
+        void shouldNotFindStudentPeselNotExist() {
+            assertThatThrownBy(() -> systemUnderTest.findStudentByPESEL(pesel))
+                    .isInstanceOf(PeselNotExistException.class)
+                    .hasMessage("PESEL doesn't exist");
+        }
     }
 }
