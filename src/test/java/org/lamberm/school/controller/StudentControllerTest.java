@@ -10,16 +10,16 @@ import org.mockito.Mock;
 
 import static org.mockito.Mockito.verify;
 
-class StudentRestControllerTest implements UnitTest {
+class StudentControllerTest implements UnitTest {
     @InjectMocks
-    StudentRestController systemUnderTest;
+    StudentController systemUnderTest;
     @Mock
     StudentService studentServiceMock;
 
     @Test
     void givenStudent_whenAddStudentToDatabase_thenAddStudent() {
         //given
-        StudentDTO studentDTO = new StudentDTO(1L, "12345678910", "first", "second", "last");
+        StudentDTO studentDTO = new StudentDTO("12345678910", "first", "second", "last");
         //when
         systemUnderTest.addStudentToDatabase(studentDTO);
         //then
@@ -27,50 +27,13 @@ class StudentRestControllerTest implements UnitTest {
     }
 
     @Test
-    void givenStudentWithWrongFirstName_whenAddStudentToDatabase_thenRestErrorResponse() {
-        //given
-        StudentDTO studentDTO = new StudentDTO(1L, "12345678910", "", "second", "last");
-        //when
-        //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.addStudentToDatabase(studentDTO));
-    }
-
-    @Test
-    void givenStudentWithWrongSecondName_whenAddStudentToDatabase_thenRestErrorResponse() {
-        //given
-        StudentDTO studentDTO = new StudentDTO(1L, "12345678910", "first", "second name length than twenty", "last");
-        //when
-        //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.addStudentToDatabase(studentDTO));
-    }
-
-    @Test
-    void givenStudentWithWrongLastName_whenAddStudentToDatabase_thenRestErrorResponse() {
-        //given
-        StudentDTO studentDTO = new StudentDTO(1L, "12345678910", "first", "second", "");
-        //when
-        //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.addStudentToDatabase(studentDTO));
-    }
-
-    @Test
-    void givenStudentWithWrongPesel_whenAddStudentToDatabase_thenRestErrorResponse() {
-        //given
-        StudentDTO studentDTO = new StudentDTO(1L, "1234567890", "first", "second", "last");
-        //when
-        //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.addStudentToDatabase(studentDTO));
-
-    }
-
-    @Test
     void givenId_whenDeleteStudentByIdFromDatabase_thenDeleteStudent() {
         //given
-        Long id = 1L;
+        Integer id = 1;
         //when
         systemUnderTest.deleteStudentByIdFromDatabase(id);
         //then
-        verify(studentServiceMock).deleteStudentById(id);
+        verify(studentServiceMock).deleteStudentById(id.longValue());
     }
 
     @Test
@@ -85,11 +48,11 @@ class StudentRestControllerTest implements UnitTest {
     @Test
     void givenId_whenProvideStudentById_thenGetStudent() {
         //given
-        Long id = 1L;
+        Integer id = 1;
         //when
         systemUnderTest.provideStudentById(id);
         //then
-        verify(studentServiceMock).findStudentById(id);
+        verify(studentServiceMock).findStudentById(id.longValue());
     }
 
     @Test
@@ -108,7 +71,7 @@ class StudentRestControllerTest implements UnitTest {
         String lastName = "";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentsByLastName(lastName));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByLastName(lastName));
     }
     @Test
     void givenFirstName_whenProvideStudentsByFirstName_thenGetStudents() {
@@ -126,7 +89,7 @@ class StudentRestControllerTest implements UnitTest {
         String firstName = "";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentsByFirstName(firstName));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByFirstName(firstName));
     }
     @Test
     void givenPesel_whenProvideStudentByPESEL_thenGetStudent() {
@@ -144,7 +107,7 @@ class StudentRestControllerTest implements UnitTest {
         String pesel = "testtesttes";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
     }
     @Test
     void givenTooShortPesel_whenProvideStudentByPESEL_thenRestErrorHandler() {
@@ -152,6 +115,6 @@ class StudentRestControllerTest implements UnitTest {
         String pesel = "123";
         //when
         //then
-        Assertions.assertThrows(StudentRestController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
+        Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
     }
 }
