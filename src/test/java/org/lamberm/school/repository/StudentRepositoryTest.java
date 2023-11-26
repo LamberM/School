@@ -26,7 +26,7 @@ class StudentRepositoryTest {
         systemUnderTest.save(student1);
         systemUnderTest.save(student2);
         //when
-        boolean isEmpty = systemUnderTest.findStudentsByFirstName(firstName).isEmpty();
+        boolean isEmpty = systemUnderTest.findStudentByFirstName(firstName).isEmpty();
         //then
         Assertions.assertFalse(isEmpty);
     }
@@ -35,7 +35,7 @@ class StudentRepositoryTest {
         //given
         String firstName = "test";
         //when
-        boolean isEmpty = systemUnderTest.findStudentsByFirstName(firstName).isEmpty();
+        boolean isEmpty = systemUnderTest.findStudentByFirstName(firstName).isEmpty();
         //then
         Assertions.assertTrue(isEmpty);
     }
@@ -47,7 +47,7 @@ class StudentRepositoryTest {
         Student student1 = new Student(1L, "12345678910", firstName, "second", "last", "");
         systemUnderTest.save(student1);
         //when
-        boolean actual = systemUnderTest.isFirstNameExist(firstName);
+        boolean actual = systemUnderTest.existsByFirstName(firstName);
         //then
         Assertions.assertTrue(actual);
     }
@@ -56,7 +56,7 @@ class StudentRepositoryTest {
         //given
         String firstName = "test";
         //when
-        boolean actual = systemUnderTest.isFirstNameExist(firstName);
+        boolean actual = systemUnderTest.existsByFirstName(firstName);
         //then
         Assertions.assertFalse(actual);
     }
@@ -69,7 +69,7 @@ class StudentRepositoryTest {
         systemUnderTest.save(student1);
         systemUnderTest.save(student2);
         //when
-        boolean isEmpty = systemUnderTest.findStudentsByLastName(lastName).isEmpty();
+        boolean isEmpty = systemUnderTest.findStudentByLastName(lastName).isEmpty();
         //then
         Assertions.assertFalse(isEmpty);
     }
@@ -78,7 +78,7 @@ class StudentRepositoryTest {
         //given
         String lastName = "test";
         //when
-        boolean isEmpty = systemUnderTest.findStudentsByLastName(lastName).isEmpty();
+        boolean isEmpty = systemUnderTest.findStudentByLastName(lastName).isEmpty();
         //then
         Assertions.assertTrue(isEmpty);
     }
@@ -89,7 +89,7 @@ class StudentRepositoryTest {
         Student student1 = new Student(1L, "12345678910", "first", "second", lastName, "");
         systemUnderTest.save(student1);
         //when
-        boolean actual = systemUnderTest.isLastNameExist(lastName);
+        boolean actual = systemUnderTest.existsByLastName(lastName);
         //then
         Assertions.assertTrue(actual);
     }
@@ -98,7 +98,7 @@ class StudentRepositoryTest {
         //given
         String lastName = "test";
         //when
-        boolean actual = systemUnderTest.isLastNameExist(lastName);
+        boolean actual = systemUnderTest.existsByLastName(lastName);
         //then
         Assertions.assertFalse(actual);
     }
@@ -109,7 +109,7 @@ class StudentRepositoryTest {
         Student student1 = new Student(1L,pesel , "first", "second", "lastName", "");
         systemUnderTest.save(student1);
         //when
-        boolean actual = systemUnderTest.findStudentByPESEL(pesel).isPresent();
+        boolean actual = systemUnderTest.findStudentByPesel(pesel).isPresent();
         //then
         Assertions.assertTrue(actual);
     }
@@ -118,7 +118,7 @@ class StudentRepositoryTest {
         //given
         String pesel = "12345678910";
         //when
-        boolean actual = systemUnderTest.findStudentByPESEL(pesel).isPresent();
+        boolean actual = systemUnderTest.findStudentByPesel(pesel).isPresent();
         //then
         Assertions.assertFalse(actual);
     }
