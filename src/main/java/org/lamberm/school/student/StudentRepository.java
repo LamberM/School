@@ -1,6 +1,5 @@
-package org.lamberm.school.repository;
+package org.lamberm.school.student;
 
-import org.lamberm.school.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

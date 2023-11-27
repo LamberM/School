@@ -1,14 +1,10 @@
-package org.lamberm.school.service;
+package org.lamberm.school.student;
 
 import lombok.RequiredArgsConstructor;
 import org.lamberm.school.error.handler.IdNotExistException;
 import org.lamberm.school.error.handler.PeselExistException;
 import org.lamberm.school.error.handler.PeselNotExistException;
 import org.lamberm.school.error.handler.StudentNotExistException;
-import org.lamberm.school.model.Student;
-import org.lamberm.school.repository.StudentRepository;
-import org.lamberm.school.mapper.StudentMapper;
-import org.lamberm.school.dto.StudentDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +18,7 @@ public class StudentService {
     private final StudentMapper studentMapper;
 
     @Transactional
-    public void addStudent(StudentDTO studentDTO) {
+    public void addStudent(StudentDto studentDTO) {
         Student student = studentMapper.map(studentDTO);
         if (isPESELexist(student.getPesel())) {
             throw new PeselExistException();
@@ -41,13 +37,13 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDTO> findAllStudents() {
+    public List<StudentDto> findAllStudents() {
         List<Student> studentList = studentRepository.findAll();
         return studentList.stream().map(studentMapper::map).toList();
     }
 
     @Transactional(readOnly = true)
-    public Optional<StudentDTO> findStudentById(Long id) {
+    public Optional<StudentDto> findStudentById(Long id) {
         if (isIdExist(id)) {
             Optional<Student> student = studentRepository.findById(id);
             return student.map(studentMapper::map);
@@ -57,7 +53,7 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDTO> findStudentsByLastName(String lastName) {
+    public List<StudentDto> findStudentsByLastName(String lastName) {
         if (studentRepository.isLastNameExist(lastName)) {
             List<Student> studentList = studentRepository.findStudentsByLastName(lastName);
             return studentList.stream().map(studentMapper::map).toList();
@@ -67,7 +63,7 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudentDTO> findStudentsByFirstName(String firstName) {
+    public List<StudentDto> findStudentsByFirstName(String firstName) {
         if (studentRepository.isFirstNameExist(firstName)) {
             List<Student> studentList = studentRepository.findStudentsByFirstName(firstName);
             return studentList.stream().map(studentMapper::map).toList();
@@ -77,7 +73,7 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<StudentDTO> findStudentByPESEL(String pesel) {
+    public Optional<StudentDto> findStudentByPESEL(String pesel) {
         if (isPESELexist(pesel)) {
             Optional<Student> student = studentRepository.findStudentByPESEL(pesel);
             return student.map(studentMapper::map);

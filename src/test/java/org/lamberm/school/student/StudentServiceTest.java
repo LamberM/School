@@ -1,16 +1,12 @@
-package org.lamberm.school.service;
+package org.lamberm.school.student;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
-import org.lamberm.school.dto.StudentDTO;
 import org.lamberm.school.error.handler.IdNotExistException;
 import org.lamberm.school.error.handler.PeselExistException;
 import org.lamberm.school.error.handler.PeselNotExistException;
 import org.lamberm.school.error.handler.StudentNotExistException;
-import org.lamberm.school.mapper.StudentMapper;
-import org.lamberm.school.model.Student;
-import org.lamberm.school.repository.StudentRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -33,13 +29,13 @@ class StudentServiceTest implements UnitTest {
     @Test
     void givenStudentMock_whenAddStudent_thenInsertToDatabase() {
         //given
-        StudentDTO studentDTOMock = mock(StudentDTO.class);
+        StudentDto studentDtoMock = mock(StudentDto.class);
         Student studentMock = mock(Student.class);
-        when(studentMapperMock.map(studentDTOMock)).thenReturn(studentMock);
+        when(studentMapperMock.map(studentDtoMock)).thenReturn(studentMock);
         //when
-        systemUnderTest.addStudent(studentDTOMock);
+        systemUnderTest.addStudent(studentDtoMock);
         //then
-        verify(studentMapperMock).map(studentDTOMock);
+        verify(studentMapperMock).map(studentDtoMock);
         verify(studentRepositoryMock).save(studentMock);
         Assertions.assertNotNull(studentRepositoryMock.findById(studentMock.getId()));
     }
@@ -47,9 +43,9 @@ class StudentServiceTest implements UnitTest {
     @Test
     void givenStudents_whenAddStudent_thenWillThrowException() {
         //given
-        Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
+        Student student1 = new Student(1L, "12345678910", "first", "second", "last");
         studentRepositoryMock.save(student1);
-        StudentDTO studentDTO = new StudentDTO( "12345678910", "test", "test", "test");
+        StudentDto studentDTO = new StudentDto( "12345678910", "test", "test", "test");
         Student student = mock(Student.class);
         when(studentMapperMock.map(studentDTO)).thenReturn(student);
         when(studentRepositoryMock.findStudentByPESEL(student.getPesel())).thenReturn(Optional.of(student1));
@@ -109,12 +105,12 @@ class StudentServiceTest implements UnitTest {
     void givenStudentMock_whenFindStudentById_thenGetStudent() {
         //given
         Student studentMock = mock(Student.class);
-        StudentDTO studentDTOMock = mock(StudentDTO.class);
+        StudentDto studentDtoMock = mock(StudentDto.class);
         studentRepositoryMock.save(studentMock);
         List<Student> studentsList = new ArrayList<>();
         studentsList.add(studentMock);
         when(studentRepositoryMock.findById(studentMock.getId())).thenReturn(Optional.of(studentMock));
-        when(studentMapperMock.map(studentMock)).thenReturn(studentDTOMock);
+        when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
         //when
         boolean isPresent = systemUnderTest.findStudentById(studentMock.getId()).isPresent();
         //then
@@ -138,8 +134,8 @@ class StudentServiceTest implements UnitTest {
     @Test
     void givenStudentsListWithStudents_whenFindStudentsByLastName_thenGetStudents() {
         //given
-        Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
-        Student student2 = new Student(2L, "12345678910", "first", "", "last", "");
+        Student student1 = new Student(1L, "12345678910", "first", "second", "last");
+        Student student2 = new Student(2L, "12345678910", "first", "", "last");
         studentRepositoryMock.save(student1);
         studentRepositoryMock.save(student2);
         List<Student> studentList = new ArrayList<>();
@@ -169,8 +165,8 @@ class StudentServiceTest implements UnitTest {
     @Test
     void givenStudentsListWithStudents_whenFindStudentsByFirstName_thenGetStudents() {
         //given
-        Student student1 = new Student(1L, "12345678910", "first", "second", "last", "");
-        Student student2 = new Student(2L, "12345678910", "first", "", "last", "");
+        Student student1 = new Student(1L, "12345678910", "first", "second", "last");
+        Student student2 = new Student(2L, "12345678910", "first", "", "last");
         studentRepositoryMock.save(student1);
         studentRepositoryMock.save(student2);
         List<Student> studentList = new ArrayList<>();
@@ -202,11 +198,11 @@ class StudentServiceTest implements UnitTest {
         //given
         String pesel = "012345678910";
         Student studentMock = mock(Student.class);
-        StudentDTO studentDTOMock = mock(StudentDTO.class);
+        StudentDto studentDtoMock = mock(StudentDto.class);
         List<Student> studentsList = new ArrayList<>();
         studentsList.add(studentMock);
         when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(Optional.ofNullable(studentMock));
-        when(studentMapperMock.map(studentMock)).thenReturn(studentDTOMock);
+        when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
         //when
         boolean isPresent = systemUnderTest.findStudentByPESEL(pesel).isPresent();
         //then
