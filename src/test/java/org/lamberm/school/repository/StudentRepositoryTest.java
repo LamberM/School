@@ -110,16 +110,16 @@ class StudentRepositoryTest {
             var student = new Student(1L, pesel, "first", "second", "lastName", "");
             systemUnderTest.save(student);
 
-            var isEmpty = systemUnderTest.findStudentByPESEL(pesel).isPresent();
+            var result = systemUnderTest.findStudentByPESEL(pesel);
 
-            Assertions.assertTrue(isEmpty);
+            Assertions.assertEquals(student, result);
         }
 
         @Test
         void shouldGetNothingWhenStudentNotExist() {
-            var isEmpty = systemUnderTest.findStudentByPESEL(pesel).isPresent();
+            var result = systemUnderTest.findStudentByPESEL(pesel);
 
-            Assertions.assertFalse(isEmpty);
+            Assertions.assertNull(result);
         }
     }
 

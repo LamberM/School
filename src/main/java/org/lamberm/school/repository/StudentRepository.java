@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
@@ -24,10 +23,11 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean isLastNameExist(@Param("lastName") String lastName);
 
     @Query("SELECT student FROM Student student WHERE student.pesel LIKE %:pesel%")
-    Optional<Student> findStudentByPESEL(@Param("pesel") String pesel);
+    Student findStudentByPESEL(@Param("pesel") String pesel);
 
     @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.pesel = :pesel")
     boolean isPeselExist(@Param("pesel") String pesel);
+
     @Query("SELECT COUNT(student) > 0 FROM Student student WHERE student.id = :id")
     boolean isIdExist(@Param("id") Long id);
 }
