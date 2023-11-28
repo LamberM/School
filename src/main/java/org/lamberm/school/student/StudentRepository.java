@@ -5,7 +5,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
@@ -17,7 +16,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     boolean existsByLastName(@Param("lastName") String lastName);
 
-    Optional<Student> findStudentByPesel(@Param("pesel") String pesel);
+    Student findStudentByPesel(@Param("pesel") String pesel);
 
-
+    boolean existsByPesel(@Param("pesel") String pesel);
 }

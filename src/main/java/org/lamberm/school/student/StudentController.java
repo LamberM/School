@@ -2,84 +2,65 @@ package org.lamberm.school.student;
 
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.pl.PESEL;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/students")
 @RequiredArgsConstructor
+@Validated
 public class StudentController {
     private final StudentService studentService;
 
-    public static class RestValidationException extends RuntimeException {
-        public RestValidationException(String message) {
-            super(message);
-        }
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity addStudentToDatabase(@Valid @RequestBody StudentDto studentDTO) {
-        studentService.addStudent(studentDTO);
+    @PostMapping
+    public ResponseEntity saveStudent(@Valid @RequestBody StudentDto studentDto) {
+        studentService.addStudent(studentDto);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteStudentByIdFromDatabase(@PathVariable("id") Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") Integer id) {
         studentService.deleteStudentById(id.longValue());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @GetMapping("/findAll")
-    public ResponseEntity<List<StudentDto>> provideStudentsList() {
+    @GetMapping
+    public ResponseEntity<List<StudentDto>> getAll() {
         return ResponseEntity.ok(studentService.findAllStudents());
     }
 
-    @GetMapping("/find/id/{id}")
-    public ResponseEntity<Optional<StudentDto>> provideStudentById(@PathVariable("id") Integer id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentDto> getById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(studentService.findStudentById(id.longValue()));
     }
 
-    @GetMapping("/find/lastName/{lastName}")
-    public ResponseEntity<List<StudentDto>> provideStudentsByLastName(@PathVariable("lastName") String lastName) {
-        if (!isContainOnlyLetters(lastName)) {
-            throw new RestValidationException("Last name must contain only letters");
-        }
+    @GetMapping("/{lastName}")
+    public ResponseEntity<List<StudentDto>> getByLastName(@Valid @PathVariable("lastName") @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only letters") @Size(min = 3, max = 100, message = "Last name length must not be less than 3 and more than 100") @NotBlank(message = "Last name must not be blank") String lastName) {
         return ResponseEntity.ok(studentService.findStudentsByLastName(lastName));
     }
 
-    @GetMapping("/find/firstName/{firstName}")
-    public ResponseEntity<List<StudentDto>> provideStudentsByFirstName(@PathVariable("firstName") String firstName) {
-        if (!isContainOnlyLetters(firstName)) {
-            throw new RestValidationException("First name must contain only letters");
-        }
+    @GetMapping("/{firstName}")
+    public ResponseEntity<List<StudentDto>> getByFirstName(@Valid @PathVariable("firstName") @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters") @NotBlank(message = "First name must not be blank") @Size(min = 2, max = 20, message = "First name length must not be less than 2 and more than 20") String firstName) {
         return ResponseEntity.ok(studentService.findStudentsByFirstName(firstName));
     }
 
-    @GetMapping("/find/PESEL/{PESEL}")
-    public ResponseEntity<Optional<StudentDto>> provideStudentByPESEL(@PathVariable("PESEL") String pesel) {
-        if (!isPeselDigitsCorrect(pesel)) {
-            throw new RestValidationException("PESEL must be digits");
-        }
-        if (!isPeselLengthCorrect(pesel)) {
-            throw new RestValidationException("PESEL length requires 11 characters");
-        }
+    @GetMapping("/{PESEL}")
+    public ResponseEntity<StudentDto> getByPESEL(@Valid @PathVariable("PESEL") @PESEL String pesel) {
         return ResponseEntity.ok(studentService.findStudentByPESEL(pesel));
-    }
-
-    private boolean isPeselLengthCorrect(String pesel) {
-        return pesel.length() == 11;
-    }
-
-    private boolean isPeselDigitsCorrect(String pesel) {
-        return pesel.matches("^[0-9]+$");
-    }
-
-    private boolean isContainOnlyLetters(String text) {
-        return text.matches("^[a-zA-Z]+$");
     }
 }

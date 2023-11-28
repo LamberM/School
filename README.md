@@ -3,6 +3,8 @@
 This project was implemented using Spring, Hibernate, PostgreSQL, Docker
 ## TODO
 * integration test
+* generate documentations with @Operation @ApiResponses
+* create profiles @Profile
 ### Must have to start server:
 * Docker
 * IntelliJ Idea
