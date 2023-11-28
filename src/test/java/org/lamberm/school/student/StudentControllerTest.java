@@ -1,10 +1,8 @@
-package org.lamberm.school.controller;
+package org.lamberm.school.student;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
-import org.lamberm.school.dto.StudentDTO;
-import org.lamberm.school.service.StudentService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -19,7 +17,7 @@ class StudentControllerTest implements UnitTest {
     @Test
     void givenStudent_whenAddStudentToDatabase_thenAddStudent() {
         //given
-        StudentDTO studentDTO = new StudentDTO("12345678910", "first", "second", "last");
+        StudentDto studentDTO = new StudentDto("12345678910", "first", "second", "last");
         //when
         systemUnderTest.addStudentToDatabase(studentDTO);
         //then
@@ -73,6 +71,7 @@ class StudentControllerTest implements UnitTest {
         //then
         Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByLastName(lastName));
     }
+
     @Test
     void givenFirstName_whenProvideStudentsByFirstName_thenGetStudents() {
         //given
@@ -91,6 +90,7 @@ class StudentControllerTest implements UnitTest {
         //then
         Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentsByFirstName(firstName));
     }
+
     @Test
     void givenPesel_whenProvideStudentByPESEL_thenGetStudent() {
         //given
@@ -109,6 +109,7 @@ class StudentControllerTest implements UnitTest {
         //then
         Assertions.assertThrows(StudentController.RestValidationException.class, () -> systemUnderTest.provideStudentByPESEL(pesel));
     }
+
     @Test
     void givenTooShortPesel_whenProvideStudentByPESEL_thenRestErrorHandler() {
         //given
