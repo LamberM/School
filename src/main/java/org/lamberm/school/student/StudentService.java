@@ -18,8 +18,7 @@ public class StudentService {
 
     @Transactional
     public void addStudent(StudentDto studentDto) {
-        Student student = studentMapper.map(studentDTO);
-        if (isPESELexist(student.getPesel())) {
+        if (studentRepository.existsByPesel(studentDto.getPesel())) {
             throw new PeselExistException();
         } else {
             var student = studentMapper.map(studentDto);
@@ -29,7 +28,7 @@ public class StudentService {
 
     @Transactional
     public void deleteStudentById(Long id) {
-        if (studentRepository.isIdExist(id)) {
+        if (studentRepository.existsById(id)) {
             studentRepository.deleteById(id);
         } else {
             throw new IdNotExistException();
@@ -44,7 +43,7 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public StudentDto findStudentById(Long id) {
-        if (studentRepository.isIdExist(id)) {
+        if (studentRepository.existsById(id)) {
             var student = studentRepository.findById(id).get();
             return studentMapper.map(student);
         } else {
@@ -54,8 +53,8 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDto> findStudentsByLastName(String lastName) {
-        if (studentRepository.isLastNameExist(lastName)) {
-            var studentList = studentRepository.getStudentsByLastName(lastName);
+        if (studentRepository.existsByLastName(lastName)) {
+            var studentList = studentRepository.findStudentByLastName(lastName);
             return studentList.stream().map(studentMapper::map).toList();
         } else {
             throw new StudentNotExistException();
@@ -64,8 +63,8 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDto> findStudentsByFirstName(String firstName) {
-        if (studentRepository.isFirstNameExist(firstName)) {
-            var studentList = studentRepository.getStudentsByFirstName(firstName);
+        if (studentRepository.existsByFirstName(firstName)) {
+            var studentList = studentRepository.findStudentByFirstName(firstName);
             return studentList.stream().map(studentMapper::map).toList();
         } else {
             throw new StudentNotExistException();
@@ -74,8 +73,8 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public StudentDto findStudentByPESEL(String pesel) {
-        if (studentRepository.isPeselExist(pesel)) {
-            var student = studentRepository.findStudentByPESEL(pesel);
+        if (studentRepository.existsByPesel(pesel)) {
+            var student = studentRepository.findStudentByPesel(pesel);
             return studentMapper.map(student);
         } else {
             throw new PeselNotExistException();

@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.pl.PESEL;
-import org.lamberm.school.dto.StudentDTO;
-import org.lamberm.school.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,8 +28,8 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
-    public ResponseEntity saveStudent(@Valid @RequestBody StudentDTO studentDTO) {
-        studentService.addStudent(studentDTO);
+    public ResponseEntity saveStudent(@Valid @RequestBody StudentDto studentDto) {
+        studentService.addStudent(studentDto);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -42,12 +40,12 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentDTO>> getAll() {
+    public ResponseEntity<List<StudentDto>> getAll() {
         return ResponseEntity.ok(studentService.findAllStudents());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentDTO> getById(@PathVariable("id") Integer id) {
+    public ResponseEntity<StudentDto> getById(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(studentService.findStudentById(id.longValue()));
     }
 

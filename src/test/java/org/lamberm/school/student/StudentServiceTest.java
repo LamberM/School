@@ -16,22 +16,27 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class StudentServiceTest implements UnitTest {
     @InjectMocks
     StudentService systemUnderTest;
+
     @Mock
     StudentRepository studentRepositoryMock;
+
     @Mock
     StudentMapper studentMapperMock;
 
+    @Mock
+    StudentDto studentDtoMock;
+
+    @Mock
+    Student studentMock;
+
     @Nested
     class addStudentTest {
-        StudentDto studentDtoMock = mock(StudentDto.class);
-        Student studentMock = mock(Student.class);
 
         @Test
         void shouldAddStudent() {
@@ -46,9 +51,9 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldNotAddStudentStudentExist() {
-            when(studentRepositoryMock.isPeselExist(studentDtoMock.getPesel())).thenReturn(true);
+            when(studentRepositoryMock.existsByPesel(studentDtoMock.getPesel())).thenReturn(true);
 
-            assertThatThrownBy(() -> systemUnderTest.addStudent(studentDTOMock))
+            assertThatThrownBy(() -> systemUnderTest.addStudent(studentDtoMock))
                     .isInstanceOf(PeselExistException.class)
                     .hasMessage("PESEL exist");
         }
@@ -60,7 +65,7 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldDeleteStudent() {
-            when(studentRepositoryMock.isIdExist(id)).thenReturn(true);
+            when(studentRepositoryMock.existsById(id)).thenReturn(true);
 
             systemUnderTest.deleteStudentById(id);
             verify(studentRepositoryMock).deleteById(id);
@@ -68,7 +73,7 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldNotDeleteStudentIdNotExist() {
-            when(studentRepositoryMock.isIdExist(id)).thenReturn(false);
+            when(studentRepositoryMock.existsById(id)).thenReturn(false);
 
             assertThatThrownBy(() -> systemUnderTest.deleteStudentById(id))
                     .isInstanceOf(IdNotExistException.class)
@@ -92,9 +97,7 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldFindStudentById() {
-            var studentMock = mock(Student.class);
-            var studentDtoMock = mock(StudentDto.class);
-            when(studentRepositoryMock.isIdExist(id)).thenReturn(true);
+            when(studentRepositoryMock.existsById(id)).thenReturn(true);
             when(studentRepositoryMock.findById(id)).thenReturn(Optional.of(studentMock));
             when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
 
@@ -117,11 +120,10 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldFindStudents() {
-            var studentMock = mock(Student.class);
             List<Student> studentsList = new ArrayList<>();
             studentsList.add(studentMock);
-            when(studentRepositoryMock.isLastNameExist(lastName)).thenReturn(true);
-            when(studentRepositoryMock.getStudentsByLastName(lastName)).thenReturn(studentsList);
+            when(studentRepositoryMock.existsByLastName(lastName)).thenReturn(true);
+            when(studentRepositoryMock.findStudentByLastName(lastName)).thenReturn(studentsList);
 
             var isEmpty = systemUnderTest.findStudentsByLastName(lastName).isEmpty();
 
@@ -142,11 +144,10 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldFindStudents() {
-            var studentMock = mock(Student.class);
             List<Student> studentsList = new ArrayList<>();
             studentsList.add(studentMock);
-            when(studentRepositoryMock.isFirstNameExist(firstName)).thenReturn(true);
-            when(studentRepositoryMock.getStudentsByFirstName(firstName)).thenReturn(studentsList);
+            when(studentRepositoryMock.existsByFirstName(firstName)).thenReturn(true);
+            when(studentRepositoryMock.findStudentByFirstName(firstName)).thenReturn(studentsList);
 
             var isEmpty = systemUnderTest.findStudentsByFirstName(firstName).isEmpty();
 
@@ -167,10 +168,8 @@ class StudentServiceTest implements UnitTest {
 
         @Test
         void shouldFindStudent() {
-            var studentMock = mock(Student.class);
-            var studentDtoMock = mock(StudentDto.class);
-            when(studentRepositoryMock.isPeselExist(pesel)).thenReturn(true);
-            when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(studentMock);
+            when(studentRepositoryMock.existsByPesel(pesel)).thenReturn(true);
+            when(studentRepositoryMock.findStudentByPesel(pesel)).thenReturn(studentMock);
             when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
 
             var result = systemUnderTest.findStudentByPESEL(pesel);

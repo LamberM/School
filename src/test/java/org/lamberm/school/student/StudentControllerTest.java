@@ -17,9 +17,9 @@ class StudentControllerTest implements UnitTest {
     void shouldSaveStudent() {
         StudentDto studentDto = new StudentDto("12345678910", "first", "second", "last");
 
-        systemUnderTest.saveStudent(studentDTO);
+        systemUnderTest.saveStudent(studentDto);
 
-        verify(studentServiceMock).addStudent(studentDTO);
+        verify(studentServiceMock).addStudent(studentDto);
     }
 
     @Test
