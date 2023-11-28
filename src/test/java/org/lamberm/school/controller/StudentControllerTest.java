@@ -28,14 +28,14 @@ class StudentControllerTest implements UnitTest {
     void shouldDeleteStudent() {
         Integer id = 1;
 
-        systemUnderTest.deleteStudentById(id);
+        systemUnderTest.deleteById(id);
 
         verify(studentServiceMock).deleteStudentById(id.longValue());
     }
 
     @Test
     void shouldProvideStudentsList() {
-        systemUnderTest.provideStudentsList();
+        systemUnderTest.getAll();
 
         verify(studentServiceMock).findAllStudents();
     }
@@ -44,7 +44,7 @@ class StudentControllerTest implements UnitTest {
     void shouldProvideStudentById() {
         Integer id = 1;
 
-        systemUnderTest.provideStudentById(id);
+        systemUnderTest.getById(id);
 
         verify(studentServiceMock).findStudentById(id.longValue());
     }
@@ -53,7 +53,7 @@ class StudentControllerTest implements UnitTest {
     void shouldProvideStudentsByLastName() {
         String lastName = "test";
 
-        systemUnderTest.provideStudentsByLastName(lastName);
+        systemUnderTest.getByLastName(lastName);
 
         verify(studentServiceMock).findStudentsByLastName(lastName);
     }
@@ -62,7 +62,7 @@ class StudentControllerTest implements UnitTest {
     void shouldProvideStudentsByFirstName() {
         String firstName = "test";
 
-        systemUnderTest.provideStudentsByFirstName(firstName);
+        systemUnderTest.getByFirstName(firstName);
 
         verify(studentServiceMock).findStudentsByFirstName(firstName);
     }
@@ -71,7 +71,7 @@ class StudentControllerTest implements UnitTest {
     void shouldProvideStudentByPESEL() {
         String pesel = "12345678910";
 
-        systemUnderTest.provideStudentByPESEL(pesel);
+        systemUnderTest.getByPESEL(pesel);
 
         verify(studentServiceMock).findStudentByPESEL(pesel);
     }
