@@ -54,8 +54,8 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDto> findStudentsByLastName(String lastName) {
-        if (studentRepository.isLastNameExist(lastName)) {
-            List<Student> studentList = studentRepository.findStudentsByLastName(lastName);
+        if (studentRepository.existsByLastName(lastName)) {
+            List<Student> studentList = studentRepository.findStudentByLastName(lastName);
             return studentList.stream().map(studentMapper::map).toList();
         } else {
             throw new StudentNotExistException();
@@ -64,8 +64,8 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDto> findStudentsByFirstName(String firstName) {
-        if (studentRepository.isFirstNameExist(firstName)) {
-            List<Student> studentList = studentRepository.findStudentsByFirstName(firstName);
+        if (studentRepository.existsByFirstName(firstName)) {
+            List<Student> studentList = studentRepository.findStudentByFirstName(firstName);
             return studentList.stream().map(studentMapper::map).toList();
         } else {
             throw new StudentNotExistException();
@@ -75,7 +75,7 @@ public class StudentService {
     @Transactional(readOnly = true)
     public Optional<StudentDto> findStudentByPESEL(String pesel) {
         if (isPESELexist(pesel)) {
-            Optional<Student> student = studentRepository.findStudentByPESEL(pesel);
+            Optional<Student> student = studentRepository.findStudentByPesel(pesel);
             return student.map(studentMapper::map);
         } else {
             throw new PeselNotExistException();
@@ -87,6 +87,6 @@ public class StudentService {
     }
 
     private boolean isPESELexist(String pesel) {
-        return studentRepository.findStudentByPESEL(pesel).isPresent();
+        return studentRepository.findStudentByPesel(pesel).isPresent();
     }
 }

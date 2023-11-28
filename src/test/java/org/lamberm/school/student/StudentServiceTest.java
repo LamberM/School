@@ -16,7 +16,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class StudentServiceTest implements UnitTest {
     @InjectMocks
@@ -45,10 +47,10 @@ class StudentServiceTest implements UnitTest {
         //given
         Student student1 = new Student(1L, "12345678910", "first", "second", "last");
         studentRepositoryMock.save(student1);
-        StudentDto studentDTO = new StudentDto( "12345678910", "test", "test", "test");
+        StudentDto studentDTO = new StudentDto("12345678910", "test", "test", "test");
         Student student = mock(Student.class);
         when(studentMapperMock.map(studentDTO)).thenReturn(student);
-        when(studentRepositoryMock.findStudentByPESEL(student.getPesel())).thenReturn(Optional.of(student1));
+        when(studentRepositoryMock.findStudentByPesel(student.getPesel())).thenReturn(Optional.of(student1));
         //when
         //then
         assertThatThrownBy(() -> systemUnderTest.addStudent(studentDTO))
@@ -141,8 +143,8 @@ class StudentServiceTest implements UnitTest {
         List<Student> studentList = new ArrayList<>();
         studentList.add(student1);
         studentList.add(student2);
-        given(studentRepositoryMock.isLastNameExist(student1.getLastName())).willReturn(Boolean.TRUE);
-        given(studentRepositoryMock.findStudentsByLastName("last")).willReturn(studentList);
+        given(studentRepositoryMock.existsByLastName(student1.getLastName())).willReturn(Boolean.TRUE);
+        given(studentRepositoryMock.findStudentByLastName("last")).willReturn(studentList);
         //when
         boolean isEmpty = systemUnderTest.findStudentsByLastName(student1.getLastName()).isEmpty();
         //then
@@ -172,8 +174,8 @@ class StudentServiceTest implements UnitTest {
         List<Student> studentList = new ArrayList<>();
         studentList.add(student1);
         studentList.add(student2);
-        given(studentRepositoryMock.isFirstNameExist(student1.getFirstName())).willReturn(Boolean.TRUE);
-        given(studentRepositoryMock.findStudentsByFirstName("first")).willReturn(studentList);
+        given(studentRepositoryMock.existsByFirstName(student1.getFirstName())).willReturn(Boolean.TRUE);
+        given(studentRepositoryMock.findStudentByFirstName("first")).willReturn(studentList);
         //when
         boolean isEmpty = systemUnderTest.findStudentsByFirstName(student1.getFirstName()).isEmpty();
         //then
@@ -201,7 +203,7 @@ class StudentServiceTest implements UnitTest {
         StudentDto studentDtoMock = mock(StudentDto.class);
         List<Student> studentsList = new ArrayList<>();
         studentsList.add(studentMock);
-        when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(Optional.ofNullable(studentMock));
+        when(studentRepositoryMock.findStudentByPesel(pesel)).thenReturn(Optional.ofNullable(studentMock));
         when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
         //when
         boolean isPresent = systemUnderTest.findStudentByPESEL(pesel).isPresent();
