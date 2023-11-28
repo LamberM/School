@@ -1,17 +1,13 @@
-package org.lamberm.school.service;
+package org.lamberm.school.student;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
-import org.lamberm.school.dto.StudentDTO;
 import org.lamberm.school.error.handler.IdNotExistException;
 import org.lamberm.school.error.handler.PeselExistException;
 import org.lamberm.school.error.handler.PeselNotExistException;
 import org.lamberm.school.error.handler.StudentNotExistException;
-import org.lamberm.school.mapper.StudentMapper;
-import org.lamberm.school.model.Student;
-import org.lamberm.school.repository.StudentRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -34,23 +30,23 @@ class StudentServiceTest implements UnitTest {
 
     @Nested
     class addStudentTest {
-        StudentDTO studentDTOMock = mock(StudentDTO.class);
+        StudentDto studentDtoMock = mock(StudentDto.class);
         Student studentMock = mock(Student.class);
 
         @Test
         void shouldAddStudent() {
-            when(studentMapperMock.map(studentDTOMock)).thenReturn(studentMock);
+            when(studentMapperMock.map(studentDtoMock)).thenReturn(studentMock);
 
-            systemUnderTest.addStudent(studentDTOMock);
+            systemUnderTest.addStudent(studentDtoMock);
 
-            verify(studentMapperMock).map(studentDTOMock);
+            verify(studentMapperMock).map(studentDtoMock);
             verify(studentRepositoryMock).save(studentMock);
             Assertions.assertNotNull(studentRepositoryMock.findById(studentMock.getId()));
         }
 
         @Test
         void shouldNotAddStudentStudentExist() {
-            when(studentRepositoryMock.isPeselExist(studentDTOMock.getPesel())).thenReturn(true);
+            when(studentRepositoryMock.isPeselExist(studentDtoMock.getPesel())).thenReturn(true);
 
             assertThatThrownBy(() -> systemUnderTest.addStudent(studentDTOMock))
                     .isInstanceOf(PeselExistException.class)
@@ -97,7 +93,7 @@ class StudentServiceTest implements UnitTest {
         @Test
         void shouldFindStudentById() {
             var studentMock = mock(Student.class);
-            var studentDtoMock = mock(StudentDTO.class);
+            var studentDtoMock = mock(StudentDto.class);
             when(studentRepositoryMock.isIdExist(id)).thenReturn(true);
             when(studentRepositoryMock.findById(id)).thenReturn(Optional.of(studentMock));
             when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);
@@ -172,7 +168,7 @@ class StudentServiceTest implements UnitTest {
         @Test
         void shouldFindStudent() {
             var studentMock = mock(Student.class);
-            var studentDtoMock = mock(StudentDTO.class);
+            var studentDtoMock = mock(StudentDto.class);
             when(studentRepositoryMock.isPeselExist(pesel)).thenReturn(true);
             when(studentRepositoryMock.findStudentByPESEL(pesel)).thenReturn(studentMock);
             when(studentMapperMock.map(studentMock)).thenReturn(studentDtoMock);

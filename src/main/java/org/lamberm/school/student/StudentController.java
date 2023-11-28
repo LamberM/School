@@ -1,4 +1,4 @@
-package org.lamberm.school.controller;
+package org.lamberm.school.student;
 
 
 import jakarta.validation.Valid;
@@ -52,17 +52,17 @@ public class StudentController {
     }
 
     @GetMapping("/{lastName}")
-    public ResponseEntity<List<StudentDTO>> getByLastName(@Valid @PathVariable("lastName") @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only letters") @Size(min = 3, max = 100, message = "Last name length must not be less than 3 and more than 100") @NotBlank(message = "Last name must not be blank") String lastName) {
+    public ResponseEntity<List<StudentDto>> getByLastName(@Valid @PathVariable("lastName") @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must contain only letters") @Size(min = 3, max = 100, message = "Last name length must not be less than 3 and more than 100") @NotBlank(message = "Last name must not be blank") String lastName) {
         return ResponseEntity.ok(studentService.findStudentsByLastName(lastName));
     }
 
     @GetMapping("/{firstName}")
-    public ResponseEntity<List<StudentDTO>> getByFirstName(@Valid @PathVariable("firstName") @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters") @NotBlank(message = "First name must not be blank") @Size(min = 2, max = 20, message = "First name length must not be less than 2 and more than 20") String firstName) {
+    public ResponseEntity<List<StudentDto>> getByFirstName(@Valid @PathVariable("firstName") @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must contain only letters") @NotBlank(message = "First name must not be blank") @Size(min = 2, max = 20, message = "First name length must not be less than 2 and more than 20") String firstName) {
         return ResponseEntity.ok(studentService.findStudentsByFirstName(firstName));
     }
 
     @GetMapping("/{PESEL}")
-    public ResponseEntity<StudentDTO> getByPESEL(@Valid @PathVariable("PESEL") @PESEL String pesel) {
+    public ResponseEntity<StudentDto> getByPESEL(@Valid @PathVariable("PESEL") @PESEL String pesel) {
         return ResponseEntity.ok(studentService.findStudentByPESEL(pesel));
     }
 }

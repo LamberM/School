@@ -1,9 +1,7 @@
-package org.lamberm.school.controller;
+package org.lamberm.school.student;
 
 import org.junit.jupiter.api.Test;
 import org.lamberm.school.UnitTest;
-import org.lamberm.school.dto.StudentDTO;
-import org.lamberm.school.service.StudentService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -17,7 +15,7 @@ class StudentControllerTest implements UnitTest {
 
     @Test
     void shouldSaveStudent() {
-        StudentDTO studentDTO = new StudentDTO("12345678910", "first", "second", "last");
+        StudentDto studentDto = new StudentDto("12345678910", "first", "second", "last");
 
         systemUnderTest.saveStudent(studentDTO);
 
