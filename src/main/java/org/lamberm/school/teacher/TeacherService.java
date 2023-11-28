@@ -48,11 +48,13 @@ public class TeacherService {
         }
     }
 
+    @Transactional(readOnly = true)
     List<TeacherDto> findAllTeachers() {
         var teacherList = teacherRepository.findAll();
         return teacherList.stream().map(teacherMapper::map).toList();
     }
 
+    @Transactional(readOnly = true)
     List<TeacherDto> findTeachersBySchoolSubject(SchoolSubject schoolSubject) {
         var teacherList = teacherRepository.findTeacherBySchoolSubject(schoolSubject);
         return teacherList.stream().map(teacherMapper::map).toList();
