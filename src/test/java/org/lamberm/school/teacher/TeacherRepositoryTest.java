@@ -45,7 +45,7 @@ class TeacherRepositoryTest {
     class findTeacherByPeselTest {
         @Test
         void shouldFindTeacherBySchoolSubject() {
-            var teacher = new Teacher(1L, pesel, "test", "test", "test", SchoolSubject.POLISH);
+            var teacher = new Teacher(3L, pesel, "test", "test", "test", SchoolSubject.POLISH);
             systemUnderTest.save(teacher);
 
             var result = systemUnderTest.findTeacherByPesel(pesel);
