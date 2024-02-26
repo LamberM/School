@@ -2,6 +2,7 @@ package org.lamberm.school.student;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,117 +17,130 @@ class StudentRepositoryTest {
         systemUnderTest.deleteAll();
     }
 
-    @Test
-    void givenStudents_whenFindStudentsByFirstName_thenGetStudents() {
-        //given
-        String firstName = "test";
-        Student student1 = new Student(1L, "12345678910", firstName, "second", "last");
-        Student student2 = new Student(2L, "12345678911", firstName, "", "last");
-        systemUnderTest.save(student1);
-        systemUnderTest.save(student2);
-        //when
-        boolean isEmpty = systemUnderTest.findStudentByFirstName(firstName).isEmpty();
-        //then
-        Assertions.assertFalse(isEmpty);
+    String firstName = "test";
+
+    String lastName = "test";
+
+    String pesel = "12345678910";
+
+    @Nested
+    class findStudentByFirstNameTest {
+        @Test
+        void shouldGetStudents() {
+            var student = new Student(1L, "12345678910", firstName, "second", "last");
+            systemUnderTest.save(student);
+
+            var isEmpty = systemUnderTest.findStudentByFirstName(firstName).isEmpty();
+
+            Assertions.assertFalse(isEmpty);
+        }
+
+        @Test
+        void shouldNotGetStudentsWhenStudentsNotExist() {
+            var isEmpty = systemUnderTest.findStudentByFirstName(firstName).isEmpty();
+
+            Assertions.assertTrue(isEmpty);
+        }
     }
 
-    @Test
-    void givenFirstName_whenFindStudentsByFirstName_thenGetNothing() {
-        //given
-        String firstName = "test";
-        //when
-        boolean isEmpty = systemUnderTest.findStudentByFirstName(firstName).isEmpty();
-        //then
-        Assertions.assertTrue(isEmpty);
+    @Nested
+    class existsByFirstNameTest {
+        @Test
+        void shouldGetTrue() {
+            var student = new Student(1L, "12345678910", firstName, "second", "last");
+            systemUnderTest.save(student);
+
+            var isEmpty = systemUnderTest.existsByPesel(firstName);
+
+            Assertions.assertTrue(isEmpty);
+        }
+
+        @Test
+        void shouldGetFalse() {
+            var isEmpty = systemUnderTest.existsByPesel(firstName);
+
+            Assertions.assertFalse(isEmpty);
+        }
     }
 
-    @Test
-    void givenStudent_whenIsFirstNameExist_thenGetTrue() {
-        //given
-        String firstName = "test";
-        Student student1 = new Student(1L, "12345678910", firstName, "second", "last");
-        systemUnderTest.save(student1);
-        //when
-        boolean actual = systemUnderTest.existsByFirstName(firstName);
-        //then
-        Assertions.assertTrue(actual);
+    @Nested
+    class findStudentByLastNameTest {
+        @Test
+        void shouldGetStudents() {
+            var student = new Student(1L, "12345678910", "first", "second", lastName);
+            systemUnderTest.save(student);
+
+            var isEmpty = systemUnderTest.findStudentByLastName(lastName).isEmpty();
+
+            Assertions.assertFalse(isEmpty);
+        }
+
+        @Test
+        void shouldNotGetStudentsWhenStudentsNotExist() {
+            var isEmpty = systemUnderTest.findStudentByLastName(lastName).isEmpty();
+
+            Assertions.assertTrue(isEmpty);
+        }
     }
 
-    @Test
-    void givenFirstName_whenIsFirstNameExist_thenGetFalse() {
-        //given
-        String firstName = "test";
-        //when
-        boolean actual = systemUnderTest.existsByFirstName(firstName);
-        //then
-        Assertions.assertFalse(actual);
+    @Nested
+    class existsByLastNameTest {
+        @Test
+        void shouldGetTrue() {
+            var student = new Student(1L, "12345678910", "first", "second", lastName);
+            systemUnderTest.save(student);
+
+            var isEmpty = systemUnderTest.existsByLastName(lastName);
+
+            Assertions.assertTrue(isEmpty);
+        }
+
+        @Test
+        void shouldGetFalse() {
+            var isEmpty = systemUnderTest.existsByLastName(lastName);
+
+            Assertions.assertFalse(isEmpty);
+        }
     }
 
-    @Test
-    void givenStudents_whenFindStudentsByLastName_thenGetStudents() {
-        //given
-        String lastName = "test";
-        Student student1 = new Student(1L, "12345678910", "first", "second", lastName);
-        Student student2 = new Student(2L, "12345678911", "second", "", lastName);
-        systemUnderTest.save(student1);
-        systemUnderTest.save(student2);
-        //when
-        boolean isEmpty = systemUnderTest.findStudentByLastName(lastName).isEmpty();
-        //then
-        Assertions.assertFalse(isEmpty);
+    @Nested
+    class findStudentByPeselTest {
+        @Test
+        void shouldGetStudent() {
+            var student = new Student(1L, pesel, "first", "second", "lastName");
+            systemUnderTest.save(student);
+
+            var result = systemUnderTest.findStudentByPesel(pesel);
+
+            Assertions.assertEquals(student, result);
+        }
+
+        @Test
+        void shouldGetNothingWhenStudentNotExist() {
+            var result = systemUnderTest.findStudentByPesel(pesel);
+
+            Assertions.assertNull(result);
+        }
     }
 
-    @Test
-    void givenFirstName_whenFindStudentsByLastName_thenGetNothing() {
-        //given
-        String lastName = "test";
-        //when
-        boolean isEmpty = systemUnderTest.findStudentByLastName(lastName).isEmpty();
-        //then
-        Assertions.assertTrue(isEmpty);
+    @Nested
+    class existsByPeselTest {
+        @Test
+        void shouldGetTrue() {
+            var student = new Student(1L, pesel, "first", "second", lastName);
+            systemUnderTest.save(student);
+
+            var isEmpty = systemUnderTest.existsByPesel(pesel);
+
+            Assertions.assertTrue(isEmpty);
+        }
+
+        @Test
+        void shouldGetFalse() {
+            var isEmpty = systemUnderTest.existsByPesel(pesel);
+
+            Assertions.assertFalse(isEmpty);
+        }
     }
 
-    @Test
-    void givenStudent_whenIsLastNameExist_thenGetTrue() {
-        //given
-        String lastName = "test";
-        Student student1 = new Student(1L, "12345678910", "first", "second", lastName);
-        systemUnderTest.save(student1);
-        //when
-        boolean actual = systemUnderTest.existsByLastName(lastName);
-        //then
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
-    void givenFirstName_whenIsLastNameExist_thenGetFalse() {
-        //given
-        String lastName = "test";
-        //when
-        boolean actual = systemUnderTest.existsByLastName(lastName);
-        //then
-        Assertions.assertFalse(actual);
-    }
-
-    @Test
-    void givenStudent_whenFindStudentByPESEL_thenGetStudent() {
-        //given
-        String pesel = "12345678910";
-        Student student1 = new Student(1L, pesel, "first", "second", "lastName");
-        systemUnderTest.save(student1);
-        //when
-        boolean actual = systemUnderTest.findStudentByPesel(pesel).isPresent();
-        //then
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
-    void _whenFindStudentByPESEL_thenGetNothing() {
-        //given
-        String pesel = "12345678910";
-        //when
-        boolean actual = systemUnderTest.findStudentByPesel(pesel).isPresent();
-        //then
-        Assertions.assertFalse(actual);
-    }
 }
